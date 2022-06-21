@@ -1,0 +1,69 @@
+<!--  
+    """
+
+        Created on Monday, January 24 2022  15:37:54 
+
+        @author: Dieuveille BOUSSA ELLENGA
+        
+    """
+-->
+
+{% extends "base_auth.html" %}
+
+{% load static %}
+
+{% block head_css %}
+
+    <link href="{% static 'assets/vendor/bootstrap-select/dist/css/bootstrap-select.min.css' %}" rel="stylesheet">
+
+{% endblock %}
+
+
+{% block content %}
+
+    <div class="row no-gutters">
+        <div class="col-xl-12">
+            <div class="auth-form">
+
+                <div class="text-center mb-3">
+                    <!-- <a href="#"><img src="{% static 'assets/images/4INB_logo.png' %}" alt="4INB Logo"></a> -->
+                    <a href="#"><img src="{% static 'assets/images/fichier6.svg' %}" width="200"  alt="4INB Logo"></a>
+                    <!-- <a href="#"><img src="{% static 'assets/images/4in_logo_tab.png' %}" width="100" alt="4INB Logo"></a> -->
+                </div>
+
+                <h4 class="text-center mb-4">Création de Compte Terminée</h4>
+
+                {% if messages %}
+                    {% for message in messages %}
+                    <div style="text-align: center;" {% if message.tags == 'warning' %} class="alert alert-danger solid alert-dismissible fade show" {% else %} class="alert alert-{{ message.tags }} solid alert-dismissible fade show" {% endif %} role="alert">
+                        {{ message|safe }}
+                        <button type="button" class="close h-100" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+
+                <div class="p-1 mt-4">
+                    <div class="alert text-center mb-4" style="background-color: #e8ecf5; color: black;" role="alert">
+                        <br/>
+                        Nous vous avons envoyé des instructions pour confirmer votre adresse email et activer votre compte. Vous devrez le recevoir bientôt.
+                        <br/>
+                        <br/>
+                        Si vous n'avez pas reçu d'email, assurez-vous d'avoir renseigné la bonne adresse email, et vérifier vos spams / emails indésirables.
+                        <br/>
+                        <br/>
+                        <br/>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    {% block javascript %}
+    {% endblock %}
+
+{% endblock %}

@@ -1,0 +1,228 @@
+<!--  
+    """
+
+        Created on Monday, January 24 2022  15:37:54 
+
+        @author: Dieuveille BOUSSA ELLENGA
+        
+    """
+-->
+
+{% extends "base_auth.html" %}
+
+{% load static %}
+
+{% block head_css %}
+
+    <link href="{% static 'assets/vendor/bootstrap-select/dist/css/bootstrap-select.min.css' %}" rel="stylesheet">
+
+{% endblock %}
+
+
+{% block content %}
+
+    <div class="row no-gutters">
+        <div class="col-xl-12">
+            <div class="auth-form">
+
+                <div class="text-center mb-3">
+                    <!-- <a href="#"><img src="{% static 'assets/images/4INB_logo.png' %}" alt="4INB Logo"></a> -->
+                    <a href="#"><img src="{% static 'assets/images/fichier6.svg' %}" width="200"  alt="4INB Logo"></a>
+                    <!-- <a href="#"><img src="{% static 'assets/images/4in_logo_tab.png' %}" width="100" alt="4INB Logo"></a> -->
+                </div>
+
+                <h4 class="text-center mb-4">Bienvenue</h4>
+                <p class="text-center text-muted">Inscrivez-vous pour continuer vers Shield4Business</p>
+
+                {% if messages %}
+                    {% for message in messages %}
+                    <!--
+                        <div class="alert alert-success solid alert-dismissible fade show">
+                            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                            <strong>Success!</strong> Message has been sent.
+                            <button type="button" class="close h-100" data-dismiss="alert" aria-label="Close"><span><i class="mdi mdi-close"></i></span>
+                            </button>
+                        </div>
+                    -->
+                    <div style="text-align: center;" {% if message.tags == 'warning' %} class="alert alert-danger solid alert-dismissible fade show" {% else %} class="alert alert-{{ message.tags }} solid alert-dismissible fade show" {% endif %} role="alert">
+                        {{ message|safe }}
+                        <button type="button" class="close h-100" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+
+                <form method="post" class="needs-validation" novalidate>
+
+                    {% csrf_token %}
+    
+                    {% load crispy_forms_tags %}
+
+                    <div class="row">                                                            
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="first_name" class="mb-1"><strong>Prénom</strong></label>
+                                <input type="text" style="color: black;" class="form-control" id="first_name" name="first_name" placeholder="Saisissez votre prénom">
+                                <div class="invalid-feedback">
+                                    Ce champ est obligatoire.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="last_name" class="mb-1"><strong>Nom</strong></label>
+                                <input type="text" style="color: black;"  class="form-control" id="last_name" name="last_name" placeholder="Saisissez votre nom">
+                                <div class="invalid-feedback">
+                                    Ce champ est obligatoire.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="username" class="mb-1"><strong>Nom d'utilisateur *</strong></label>
+
+                        <input type="text" style="color: black;"  class="form-control" id="username" name="username" placeholder="Saisissez votre nom d'utilisateur" required>
+
+                        <div class="invalid-feedback">
+                            Ce champ est obligatoire.
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="email" class="mb-1"><strong>Adresse email *</strong></label>
+
+                        <input type="email" style="color: black;"  class="form-control" id="email" name="email" placeholder="Saisissez votre email" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" required>
+
+                        <div id="error" style="font-size: small;"></div>
+
+                        <div class="invalid-feedback">
+                            Ce champ est obligatoire.
+                        </div>
+                    </div>
+
+                    <div class="basic-form">
+                        <div class="form-group">
+                            <label for="departement" id="that_label" class="mb-1"><strong>Sélectionnez votre département *:</strong></label>
+                            <select multiple class="form-control default-select" id="department" name="department" required>
+                                {% for d in departments %}
+                                    <option value="{{ d.id }}" style="color: black;" >{{ d.title }}</option>
+                                {% endfor %}
+
+                                <!-- <option value="1" style="color: black;" >Direction Générale</option>
+                                <option value="2" style="color: black;" >Commercial</option>
+                                <option value="3" style="color: black;" >Produit</option>
+                                <option value="4" style="color: black;" >Marketing</option> -->
+                            </select>
+                            
+                            <div class="invalid-feedback">
+                                Ce champ est obligatoire.
+                            </div>
+                        </div>
+                        
+                    </div>
+
+                    
+                    <div class="form-group">
+                        <label for="password" class="mb-1"><strong>Mot de passe *</strong></label>
+
+                        <input type="password" style="color: black;"  class="form-control" id="password" name="password" placeholder="Saisissez votre mot de passe" required>
+
+                        <div class="invalid-feedback">
+                            Ce champ est obligatoire.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password2" class="mb-1"><strong>Confirmation Mot de passe *</strong></label>
+
+                        <input type="password" style="color: black;"  class="form-control" id="password2" name="password2" placeholder="Saisissez à nouveau votre mot de passe" required> 
+
+                        <div class="invalid-feedback">
+                            Assurez-vous que les mots de passe sont les mêmes.
+                        </div> 
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-primary text-white btn-block">S'inscrire</button>
+                    </div>
+                </form>
+
+                <div class="new-account mt-3">
+                    <p class="">Vous avez déjà un compte ? <a href="{% url 'login' %}" class="text" style="color: #e4032e;">Connectez-vous</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    {% block javascript %}
+        <script type="text/javascript">
+
+            var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+            var user_email = document.getElementById("email");     
+
+            user_email.onblur = function() 
+            {
+                if ( !(user_email.value.match(mailformat)) ) 
+                {
+                    user_email.classList.add('invalid');
+                    error.innerHTML = 'Veuillez entrer un format d\'email valid \n \n e.g. john-doe@gmail.com'
+                }
+            };
+
+            user_email.onfocus = function() {
+                if (this.classList.contains('invalid')) {
+                    // remove the "error" indication, because the user wants to re-enter something
+                    this.classList.remove('invalid');
+                    error.innerHTML = "";
+                }
+            };
+
+            var the_department = document.getElementById('department');
+            // console.log(the_department.value);  // undefined
+            // // console.log(the_department.text);  // undefined
+            // // console.log(the_department.textContent); // shows the options in it 
+            // // console.log(the_department.options[the_department.selectedIndex].text);
+
+            // Example starter JavaScript for disabling form submissions if there are invalid fields
+            (function () {
+                'use strict'
+
+                // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                var forms = document.querySelectorAll('.needs-validation');
+
+                // Loop over them and prevent submission
+                Array.prototype.slice.call(forms)
+                .forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+
+                        if ( !form.checkValidity() ) {
+                            event.preventDefault()
+                            event.stopPropagation()
+                        }
+
+                        if ( (!the_department) || (the_department.value == '') || (the_department.value == 'Nothing selected') )  
+                        {
+                            the_department.style.border = "thin solid red";
+                            // document.getElementById('that_label').getAttribute('class');
+                            document.getElementById('that_label').removeAttribute("class");
+                            document.getElementById('that_label').setAttribute('class', 'mb-1');
+                            document.getElementById('that_label').style.color = "red";
+
+                            event.preventDefault();
+                            event.stopPropagation()
+                        }
+
+                        document.getElementById('that_label').removeAttribute("class");
+                        document.getElementById('that_label').setAttribute('class', 'mb-1');
+
+                        form.classList.add('was-validated')
+                    }, false)
+                })
+            })()
+
+        </script>
+    {% endblock %}
+
+{% endblock %}
