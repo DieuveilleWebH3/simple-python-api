@@ -12,6 +12,15 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
+import mimetypes
+
+mimetypes.add_type("text/css", ".css", True)
+mimetypes.add_type("text/javascript", ".js", True)
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -40,6 +49,8 @@ INSTALLED_APPS = [
     
     'import_export',
     'crispy_forms',
+    
+    'dashboard',
 ]
 
 MIDDLEWARE = [
@@ -144,6 +155,13 @@ MEDIA_URL = '/media/'
 
 # CRISPY_TEMPLATE_PACK = 'bootstrap4'
 CRISPY_TEMPLATE_PACK = 'bootstrap5'
+
+
+# LOGIN
+# LOGIN_REDIRECT_URL = '/'
+# LOGIN_URL = 'login'
+# LOGOUT_URL = 'logout'
+LOGOUT_REDIRECT_URL = 'index'
 
 
 # Configure Django App for Heroku.
