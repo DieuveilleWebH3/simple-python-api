@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title></title>
+    <meta name="viewport" content="width = 375, initial-scale = -1">
+  </head>
+
+  {% load static %}
+
+  <body style="background-color: #ffffff; font-size: 16px;">
+    <center>
+      <table align="center" border="0" cellpadding="0" cellspacing="0" style="height:100%; width:600px;">
+          <!-- BEGIN EMAIL -->
+          <tr>
+            <td align="center" bgcolor="#ffffff" style="padding:30px">
+               <p style="text-align:left">Bonjour {{ user.username }},<br><br> Veuillez cliquer sur le buton suivant pour confirmer votre inscription. 
+              </p>
+              <p>
+
+                <a target="_blank" style="text-decoration:none; background-color: rgb(19, 139, 194); border: rgb(19, 139, 194) 1px solid; color: #fff; padding:10px 10px; display:block;" href="http://{{absurl}}">
+                  <strong>Activer mon compte</strong></a> 
+                  
+              </p>
+              <br>
+              <p>Vous pouvez copier ce lien et l'ouvrir dans une nouvelle fenêtre si le bouton ne fonctionne pas</p>
+              <p> {{absurl}} </p>
+              <br>
+              <p style="text-align:left">Ce lien ne peut être utilisé qu'une seule fois.<br><br>Si vous avez déjà activé votre compte, vous pouvez simplement ignorer cet e-mail.</p>
+              <p style="text-align:left">Cordialement,<br>L'équipe Shield4Business
+              </p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="text-align:left mb-3">
+        <a href="#"><img src="{% static 'assets/images/4INB_logo.png' %}" alt="4INB Logo"></a>
+    </div>
+    </center>
+  </body>
+</html>
