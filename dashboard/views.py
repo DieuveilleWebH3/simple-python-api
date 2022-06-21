@@ -46,6 +46,13 @@ from simple_python_api.settings import MEDIA_ROOT, BASE_DIR
 
 def index(request):
     
-    return True
+    # we request the user
+    # user = request.user
 
+
+    context = {
+        # 'user': user,
+        }
+        
+    return render(request, 'dashboard/index.html', context)
 
