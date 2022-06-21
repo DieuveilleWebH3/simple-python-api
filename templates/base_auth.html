@@ -1,0 +1,82 @@
+<!--  
+    """
+
+        Created on Monday, May 29 2022  21:37:54 
+
+        @author: Dieuveille BOUSSA ELLENGA
+        
+    """
+-->
+
+<!DOCTYPE html>
+
+{% load static %}
+
+{% load crispy_forms_tags %}
+
+<html lang="fr" class="h-100">
+{% comment %} <html lang="fr"> {% endcomment %}
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="author" content="Dieuveille BOUSSA ELLENGA">
+    <meta content="El Benie Consulting, El Benie, Consulting, Coaching, Personal Coaching, Personal blog, Coaching website, Gracie BOUSSA ELLENGA, Gracie BOUSSA, Gracie ELLENGA, BOUSSA ELLENGA, GRACIE BOUSSA ELLENGA, App by Dieuveille BOUSSA ELLENGA" name="description"/>
+    <title>{% block title %}{% endblock %}    |   El Benie </title>
+    <!-- Favicon icon -->
+    <!-- <link rel="icon" type="image/png" sizes="16x16" href="{% static 'account/images/favicon.png' %}"> -->
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'account/images/4IN_favicon.png' %}">
+    <link href="{% static 'account/css/styleNew.css' %}" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&family=Roboto:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+
+    
+    <style>
+        .invalid { border-color: red; }
+        #error { color: red }
+    </style>
+
+        
+    {% block head_css %}
+    {% endblock %}
+
+    {% block head_javascript %}
+    {% endblock %}
+</head>
+
+<body class="h-100">
+    <div class="authincation h-100">
+        <div class="container h-100">
+            <div class="row justify-content-center h-100 align-items-center">
+                <div class="col-md-6">
+                    <div class="authincation-content">
+
+
+                        {% block content %}
+                        {% endblock %}
+
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!--**********************************
+        Scripts
+    ***********************************-->
+    <!-- Required vendors -->
+    <script src="{% static 'account/vendor/global/global.min.js' %}"></script>
+	<script src="{% static 'account/vendor/bootstrap-select/dist/js/bootstrap-select.min.js' %}"></script>
+    <script src="{% static 'account/js/custom.min.js' %}"></script>
+    <script src="{% static 'account/js/deznav-init.js' %}"></script>
+
+
+    {% block javascript %}
+    {% endblock %}
+
+
+</body>
+
+</html>
