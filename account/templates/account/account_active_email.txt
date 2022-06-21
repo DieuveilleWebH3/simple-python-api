@@ -1,0 +1,14 @@
+{% autoescape off %}
+Bonjour {{ user.username }},
+
+Veuillez cliquer sur le buton suivant pour confirmer votre inscription.
+
+{{absurl}}
+
+Ce lien ne peut être utilisé qu'une seule fois. Si vous avez déjà activé votre compte, vous pouvez simplement ignorer cet e-mail.
+
+
+Cordialement,
+L'équipe Shield4Business
+
+{% endautoescape %}

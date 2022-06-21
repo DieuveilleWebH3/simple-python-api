@@ -1,0 +1,78 @@
+<!--  
+    """
+
+        Created on Monday, January 24 2022  15:37:54 
+
+        @author: Dieuveille BOUSSA ELLENGA
+        
+    """
+-->
+
+{% extends "base_auth.html" %}
+
+{% load static %}
+
+{% block head_css %}
+
+    <link href="{% static 'assets/vendor/bootstrap-select/dist/css/bootstrap-select.min.css' %}" rel="stylesheet">
+
+{% endblock %}
+
+
+{% block content %}
+
+    <div class="row no-gutters">
+        <div class="col-xl-12">
+            <div class="auth-form">
+
+                <div class="text-center mb-3">
+                    <!-- <a href="#"><img src="{% static 'assets/images/logo-full.png' %}" alt="Logo"></a> -->
+                    <a href="#"><img src="{% static 'assets/images/4INB_logo.png' %}" alt="4INB Logo"></a>
+                    <!-- <a href="#"><img src="{% static 'assets/images/logo_tab.png' %}" alt="4INB Logo"></a> -->
+                </div>
+
+                <h4 class="text-center mb-4 text-white">Sign up your account</h4>
+
+                    {% if messages %}
+                        {% for message in messages %}
+                        <!--
+                            <div class="alert alert-success solid alert-dismissible fade show">
+                                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                                <strong>Success!</strong> Message has been sent.
+                                <button type="button" class="close h-100" data-dismiss="alert" aria-label="Close"><span><i class="mdi mdi-close"></i></span>
+                                </button>
+                            </div>
+                        -->
+                        <div style="text-align: center;" {% if message.tags == 'warning' %} class="alert alert-danger solid alert-dismissible fade show" {% else %} class="alert alert-{{ message.tags }} solid alert-dismissible fade show" {% endif %} role="alert">
+                            {{ message|safe }}
+                            <button type="button" class="close h-100" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+
+                <div class="p-1 mt-4">
+                    <div class="alert text-center mb-4" style="background-color: #e8ecf5; color: black;" role="alert">
+                        <br/>
+                        The registration functionnality has been disabled. You can not create a new account ! 
+                        <br/>
+                        <br/>
+                        Talk to your Admin to allow user registration.
+                        <br/>
+                        <br/>
+                        <br/>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    {% block javascript %}
+    {% endblock %}
+
+{% endblock %}
+        

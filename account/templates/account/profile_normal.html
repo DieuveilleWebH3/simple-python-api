@@ -1,0 +1,151 @@
+<!--  
+    """
+
+        Created on Monday, January 24 2022  15:37:54 
+
+        @author: Dieuveille BOUSSA ELLENGA
+        
+    """
+-->
+
+{% extends 'base_campaign_normal.html' %}
+
+{% load static %}
+
+{% load crispy_forms_tags %}
+
+{% block head_css %}
+{% endblock %}
+
+
+{% block content %}
+
+    <!--**********************************
+        Content body start
+    ***********************************-->
+    <div class="content-body">
+        <div class="container-fluid">
+            <div class="page-titles">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item active"><a href="javascript:void(0)"> Mon compte </a></li>
+                </ol>
+            </div>
+            <!-- row -->
+
+
+            {% if messages %}
+                {% for message in messages %}
+                <div style="width: 80%; margin: auto; text-align: center;" {% if message.tags == 'warning' %} class="alert alert-danger solid alert-dismissible fade show" {% else %} class="alert alert-{{ message.tags }} solid alert-dismissible fade show" {% endif %} role="alert">
+                    {{ message|safe }}
+                    <button type="button" class="close h-100" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Modifier vos informations personnelles</h4>
+                        </div>
+
+
+                        <div class="card-body">
+                            <!-- Nav tabs -->
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" data-toggle="tab" href="#profile8">
+                                        <span>
+                                            <i class="ti-user"> Modifier le profil </i>
+                                        </span>
+                                    </a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#password8">
+                                        <span>
+                                            <i class="fas fa-info-circle"> Changer le mot de passe </i>
+                                        </span>
+                                    </a>
+                                </li>
+                            </ul>
+
+                            <!-- Tab panes -->
+                            <div class="tab-content tabcontent-border">
+                                <div class="tab-pane fade show active" id="profile8" role="tabpanel">
+                                    <div class="pt-4">
+
+                                        <form style="grid-area: form; width: 60%; margin: auto;" action="{% url 'edit' %}" method="post" enctype="multipart/form-data">
+
+                                            {% csrf_token %}
+
+                                            {{ user_form|crispy }}
+
+                                            <div class="padding" style="height: 8px;"></div>
+                                            
+                                            <div id="div_id_date_of_birth" class="form-group">
+                                                <label for="id_date_of_birth" class="requiredField">
+                                                    Date de naissance
+                                                </label> 
+                                                <div class=""> 
+                                                    <input type="date" name="date_of_birth" class="dateinput form-control" id="date_of_birth" placeholder='{{user.date_of_birth}}' value='{{user.date_of_birth }}'> 
+                                                </div>
+                                            </div>
+
+                                            <div class="padding" style="height: 8px;"></div>
+
+                                            <div id="div_id_photo" class="form-group">
+                                                <label for="id_photo" class="">
+                                                    Photo
+                                                </label> 
+                                                <div class=""> 
+                                                    <input type="file" name="photo" class="form-control-file" id="id_photo" accept="image/*"> 
+                                                    <!-- 
+                                                        <input type="file" name="photo" accept="image/*" class="form-control-file" class="clearablefileinput form-control-file" id="id_photo">  
+                                                    -->  
+                                                </div>
+                                            </div> 
+
+                                            <div class="padding" style="height: 12px;"></div>
+
+                                            <button  type='submit' class="float-right btn btn-primary btn-user">Enregistrer</button>
+                                        </form>
+
+                                    </div>
+                                </div>
+
+                                <div class="tab-pane fade" id="password8" role="tabpanel">
+                                    <div class="pt-4">
+                                        <p style="text-align: center;" >Vous pouvez changer votre mot de passe en utilisant ce formulaire:</p>
+                                    
+                                        <form style="grid-area: form; width: 60%; margin: auto;" action="{% url 'change_password' %}" method="post">
+                                            {% csrf_token %}
+                                            {{ pform|crispy }}
+    
+                                            <div class="padding" style="height: 12px;"></div>
+    
+                                            <button type='submit' class="float-right btn btn-primary ">Enregistrer</button>
+                                        </form>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div> <!-- end col -->
+    </div> <!-- end row -->
+    <!--**********************************
+        Content body end
+    ***********************************-->
+    
+{% endblock %}
+
+{% block javascript %}
+{% endblock %}
