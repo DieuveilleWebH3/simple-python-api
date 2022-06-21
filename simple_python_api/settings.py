@@ -25,7 +25,7 @@ SECRET_KEY = '4*5)tmyr#rcjzne_-ef)^xh%g#=db+442h-k230*i+)%j)$t8!'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -144,3 +144,8 @@ MEDIA_URL = '/media/'
 
 # CRISPY_TEMPLATE_PACK = 'bootstrap4'
 CRISPY_TEMPLATE_PACK = 'bootstrap5'
+
+
+# Configure Django App for Heroku.
+import django_heroku
+django_heroku.settings(locals())
