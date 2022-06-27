@@ -32,14 +32,18 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '4*5)tmyr#rcjzne_-ef)^xh%g#=db+442h-k230*i+)%j)$t8!'
 
 # SECURITY WARNING: don't run with debug turned on in production!
+# DEBUG = False
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
+
+AUTH_USER_MODEL = "account.User"
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'account',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -55,11 +59,21 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+
+    "corsheaders.middleware.CorsMiddleware",
+    # "whitenoise.middleware.WhiteNoiseMiddleware",
+    
     'django.contrib.sessions.middleware.SessionMiddleware',
+
+    "django.middleware.locale.LocaleMiddleware",
+    
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+
+    "django.middleware.common.BrokenLinkEmailsMiddleware",
+    
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     
     # Simplified static file serving.
@@ -105,6 +119,16 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
 
+# PASSWORDS
+# ------------------------------------------------------------------------------
+PASSWORD_HASHERS = [
+    "django.contrib.auth.hashers.Argon2PasswordHasher",
+    "django.contrib.auth.hashers.PBKDF2PasswordHasher",
+    "django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher",
+    "django.contrib.auth.hashers.BCryptSHA256PasswordHasher",
+]
+
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -140,6 +164,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (os.path.join(BASE_DIR, './static'),)
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 
 # Simplified static file serving.
@@ -157,11 +182,134 @@ MEDIA_URL = '/media/'
 CRISPY_TEMPLATE_PACK = 'bootstrap5'
 
 
+# 
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
+# for Gmail SMTP Server configuration  # Testing on local 
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+DEFAULT_TO_EMAIL = os.getenv('DEFAULT_TO_EMAIL')
+
+
 # LOGIN
 # LOGIN_REDIRECT_URL = '/'
 # LOGIN_URL = 'login'
 # LOGOUT_URL = 'logout'
 LOGOUT_REDIRECT_URL = 'index'
+
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'account.authentication.EmailAuthBackend'
+]
+
+
+REDIRECT_ALLOWED_SCHEMES = ['http', 'https', 'http://', 'https://']
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework.authentication.BasicAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
+    ),
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.AllowAny",),
+
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    # 'PAGE_SIZE': 100,
+    'DEFAULT_SCHEMA_CLASS':'rest_framework.schemas.coreapi.AutoSchema' 
+}
+
+SWAGGER_SETTINGS = {
+    # 'exclude_namespaces': ['rest_logout', ],
+    # 'SHOW_REQUEST_HEADERS': True,
+    # 'SUPPORTED_SUBMIT_METHODS': [
+    #     'get',
+    #     'post',
+    #     'delete',
+    #     'options',
+    #     'put',
+    #     'patch'
+    # ],
+
+    'SECURITY_DEFINITIONS': {
+        "Bearer": {
+            "type": "apiKey", 
+            "name": "Authorization", 
+            "in": "header"
+        },
+
+        # 'api_key': {
+        #     'type': 'apiKey',
+        #     'in': 'header',
+        #     'name': 'Authorization'
+        # }
+    },
+    
+    # 'USE_SESSION_AUTH': True,
+    # 'JSON_EDITOR': True,
+    # 'REFETCH_SCHEMA_ON_LOGOUT': True
+}
+
+
+
+# OIDC
+# -----------------------------------------------------
+OIDC_GRANT_TYPE_PASSWORD_ENABLE = True
+OIDC_INTROSPECTION_VALIDATE_AUDIENCE_SCOPE = False
+
+
+
+# CORSHEADERS
+CORS_ALLOW_ALL_ORIGINS = True
+
+CORS_ALLOWED_ORIGINS = [
+    "http://192.168.33.109:8009", 
+    "http://192.168.33.109:8019", 
+    "http://192.168.33.109:8000",
+    "http://localhost:8000", 
+    "http://127.0.0.1:8000",
+    "http://localhost:8009", 
+    "http://127.0.0.1:8009",
+    "http://localhost:4200", 
+    "http://127.0.0.1:4200", 
+    "http://localhost:4201", 
+    "http://127.0.0.1:4201", 
+    "http://localhost:4300", 
+    "http://127.0.0.1:4300",
+    "http://localhost:5000",
+    "http://127.0.0.1:5000",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:4000",
+    "http://127.0.0.1:4000",
+]
+
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+    'Access-Control-Allow-Origin',
+]
+
 
 
 # Configure Django App for Heroku.
