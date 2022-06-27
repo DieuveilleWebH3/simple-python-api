@@ -16,7 +16,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST, require_GET
 from django.contrib import messages
 
-from web_business import settings
+from simple_python_api import settings
 from .models import *
 from .forms import *
 from django.contrib.auth.forms import PasswordChangeForm
