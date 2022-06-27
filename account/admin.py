@@ -18,9 +18,9 @@ from .models import *
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ['username', 'email', 'account_type', 'is_active',] 
+    list_display = ['username', 'email', 'user_type', 'is_active',] 
     search_fields = ['username', 'email' ] 
-    filter_fields = ['account_type', 'is_active'] 
+    filter_fields = ['user_type', 'is_active'] 
     
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)

@@ -112,7 +112,7 @@ def user_login(request):
                     if user.is_active:
                         login(request, user)
 
-                        if user.account_type == '2':
+                        if user.user_type == '2':
 
                             return redirect('enquete', type='qvt')
                         
@@ -308,7 +308,7 @@ def activate(request, uidb64, token, backend='django.contrib.auth.backends.Model
 
         messages.success(request, "Votre compte a été activé avec success ! ")
 
-        if user.account_type == '2': 
+        if user.user_type == '2': 
             return redirect('enquete', type='satisfaction')
         return redirect('dashboard')
     else:
@@ -321,7 +321,7 @@ def profile(request):
 
     user = request.user
 
-    if user.account_type == '2':
+    if user.user_type == '2':
         template_name = 'account/profile_normal.html'
     else :
         template_name = 'account/profile.html'
