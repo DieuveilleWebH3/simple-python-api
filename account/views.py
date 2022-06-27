@@ -156,9 +156,6 @@ def resend_activate(user_email):
 
 
 def register(request):
-
-    # departments = Department.objects.all()
-    departments = Department.objects.filter(company=2)
     
     # we request the user
     a_user = request.user
@@ -177,7 +174,7 @@ def register(request):
             if len(department_id) == 0:
                 messages.warning(request, 'Veuillez choisir le département.')
                 
-                return render(request, 'account/register.html', {'user_form': user_form, 'departments': departments})
+                return render(request, 'account/register.html', {'user_form': user_form})
             else:
                 department_id = list(map(int, department_id))
 
@@ -290,7 +287,7 @@ def register(request):
                 return redirect('register')
         else:
             user_form = UserRegistrationForm()
-        return render(request, 'account/register.html', {'user_form': user_form, 'departments': departments})
+        return render(request, 'account/register.html', {'user_form': user_form})
 
 
 def activate(request, uidb64, token, backend='django.contrib.auth.backends.ModelBackend'):
