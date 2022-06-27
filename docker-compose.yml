@@ -4,7 +4,7 @@ services:
    app:  &python
       build: 
          context: .
-         dockerfile: docker/Dockerfile
+         dockerfile: docker/app/Dockerfile
       image: web_simple_python_api_web_dev_image
       container_name: web_simple_python_api_web_dev
 
@@ -20,6 +20,7 @@ services:
       deploy:
          resources:
            limits:
-             memory: 32G
+            # memory: 32G
+            memory: 16G
 
 
