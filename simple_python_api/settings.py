@@ -51,8 +51,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
-    'import_export',
     'crispy_forms',
+
+    'rest_framework_swagger',
+    "rest_framework",
+    "drf_yasg",
+    'reset_migrations',
+    "corsheaders",
+    "oidc_provider",
+    "import_export",
     
     'dashboard',
 ]
