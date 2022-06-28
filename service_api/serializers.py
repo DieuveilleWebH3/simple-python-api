@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate, login, get_user_model
 from django.contrib import auth
-from rest_framework import serializers
+from rest_framework import serializers 
+# from rest_framework.serializers import FileField
 from rest_framework.exceptions import AuthenticationFailed
 
 from account.models import *
@@ -146,7 +147,6 @@ class SetNewPasswordSerializer(serializers.Serializer):
 # *****                                             *****
 # *******************************************************
 
-
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
@@ -156,5 +156,11 @@ class CategorySerializer(serializers.ModelSerializer):
 class ArticleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Articles
-        fields = ["id", "author", "category", "title", "slug", "content", "created_at", "modified_at"]
+        fields = ["id", "author", "category", "title", "slug", "content", "read_by", "liked_by", "created_at", "modified_at"]            
+            
+            
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comments
+        fields = ["id", "name", "article", "content", "created_at", "modified_at"]
 
