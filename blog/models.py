@@ -84,11 +84,32 @@ class Comments(models.Model):
     
     name = models.CharField(max_length=255, unique=False, blank=False, null=False)
     
-    content = models.TextField(null=True, blank=True)
+    content = models.TextField(null=False, blank=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
         return f'{str(self.article.slug)} - {str(self.name)}'
+
+
+
+# Model Demands  
+class Demands(models.Model):
+    
+    author = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
+
+    publish_group = models.ForeignKey(PublishGroups, blank=False, null=False, on_delete=models.CASCADE)
+
+    article = models.ForeignKey(Articles, blank=False, null=False, on_delete=models.CASCADE)
+
+    content = models.TextField(null=False, blank=False)
+    
+    status = models.BooleanField(default=False)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f'{str(self.author.username)} - {str(self.publish_group.slug)} - {str(self.article.slug)}'
 
