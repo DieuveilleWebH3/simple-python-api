@@ -369,7 +369,7 @@ class CategoryViewSet(ModelViewSet):
 
             if slug:
                 
-                category = category.objects.get(slug=slug)
+                category = Category.objects.filter(slug=slug)
                 # if category.exists():
                 if category:
                     
@@ -430,7 +430,7 @@ class CategoryViewSet(ModelViewSet):
 
         try:
             
-            category = category.objects.get(slug=slug)
+            category = Category.objects.get(slug=slug)
 
             if category:
                 

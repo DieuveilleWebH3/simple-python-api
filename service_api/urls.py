@@ -64,6 +64,7 @@ urlpatterns = [
     
     # 
     path('category/', CategoryViewSet.as_view({'get': 'list', 'post':'create'}), name="category"), 
+    path('category/<slug>', CategoryViewSet.as_view({'put': 'update'}), name='category'),
     
 ]
 
