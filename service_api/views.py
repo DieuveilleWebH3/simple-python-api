@@ -81,12 +81,6 @@ class RegisterView(generics.GenericAPIView):
         user = User.objects.get(email=user_data['email'])
 
         user.is_active = True
-        
-        # if user_data['last_name']:
-        #     user.last_name = user_data['last_name']
-        
-        # if user_data['first_name']:
-        #     user.first_name = user_data['first_name']
             
         user.save()
             
