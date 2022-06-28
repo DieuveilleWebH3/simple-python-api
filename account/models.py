@@ -1,7 +1,7 @@
 
 """
 
-    Created on Monday, June 21 2022  14:37:54 
+    Created on Monday, June 27 2022  15:37:54 
     
     @author: Dieuveille BOUSSA ELLENGA
     
@@ -22,8 +22,8 @@ import os
 class User(AbstractUser):
     
     ACCOUNT_TYPE_CHOICES = ( 
-        ('0', 'Administrateur'), 
-        ('1',  'Normal_user'),
+        ('0', 'Publisher'), 
+        ('1',  'Author'),
     )
     
     def get_upload_path(self, filename):
@@ -32,7 +32,7 @@ class User(AbstractUser):
     
     email = models.EmailField(unique=True)
 
-    account_type = models.CharField(max_length=50, choices=ACCOUNT_TYPE_CHOICES, default='1')
+    user_type = models.CharField(max_length=50, choices=ACCOUNT_TYPE_CHOICES, default='1')
 
     date_of_birth = models.DateField(blank=True, null=True)
     photo = models.ImageField(upload_to=get_upload_path, null=True, blank=True)

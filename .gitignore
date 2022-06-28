@@ -110,6 +110,11 @@ venv/
 ENV/
 
 my_venv/
+my_venv38/
+my_venv310/
+my_venv37/
+my_venv378/
+my_venv3711/
 
 env.bak/
 venv.bak/
