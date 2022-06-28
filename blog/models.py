@@ -46,11 +46,49 @@ class Articles(models.Model):
     
     read_by = models.IntegerField()
     liked_by = models.IntegerField()
+    
+    photo = models.ImageField(upload_to="media", null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
         return f'{str(self.slug)} - {str(self.author.username)} - {str(self.read_by)}'
+
+
+# Model PublishGroups  
+class PublishGroups(models.Model):
     
+    publisher = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
+
+    articles = models.ManyToManyField(Articles, blank=True, related_name='group_articles')
+
+    title = models.CharField(max_length=255, unique=True, blank=False, null=False)
+    slug = models.CharField(max_length=255, unique=True)
+    
+    desciption = models.TextField(null=True, blank=True)
+    
+    photo = models.ImageField(upload_to="media", null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f'{str(self.slug)} - {str(self.publisher.username)}'
+
+
+# Model Comments  
+class Comments(models.Model):
+    
+    article = models.ForeignKey(Articles, blank=True, null=True, on_delete=models.SET_NULL)
+    
+    name = models.CharField(max_length=255, unique=False, blank=False, null=False)
+    
+    content = models.TextField(null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f'{str(self.article.slug)} - {str(self.name)}'
 
