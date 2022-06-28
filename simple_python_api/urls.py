@@ -24,7 +24,11 @@ urlpatterns = [
     
     path('', include('dashboard.urls')),
     # path('', include('dashboard.urls')),
+
+    path('api/', include('service_api.urls')),
+    # path('', include('service_api.urls')),
 ]
+
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

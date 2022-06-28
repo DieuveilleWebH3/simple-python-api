@@ -1,7 +1,7 @@
 
 """
 
-    Created on Monday, June 21 2022  1':37:54 
+    Created on Monday, June 27 2022  15:37:54 
     
     @author: Dieuveille BOUSSA ELLENGA
     
@@ -18,9 +18,9 @@ from .models import *
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ['username', 'email', 'account_type', 'is_active',] 
+    list_display = ['first_name','last_name','username', 'email', 'user_type', 'is_active',] 
     search_fields = ['username', 'email' ] 
-    filter_fields = ['account_type', 'is_active'] 
+    filter_fields = ['user_type', 'is_active'] 
     
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
