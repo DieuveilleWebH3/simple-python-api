@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     "import_export",
     
     'dashboard',
+    'blog',
 ]
 
 MIDDLEWARE = [
