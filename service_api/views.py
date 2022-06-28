@@ -133,11 +133,6 @@ class LoginAPIView(generics.GenericAPIView):
 
                 res = output.json()
 
-                print("\n")
-                print("*************************** JSON Response Data in Post Login Api ****************************")
-                print(res)
-                print("\n")
-
                 response = {"tokens": {
                     'access_token': res["access_token"],
                     'refresh_token': res["refresh_token"],
@@ -145,15 +140,6 @@ class LoginAPIView(generics.GenericAPIView):
                     'token_type': res["token_type"],
                     'id_token': res["id_token"],
                 }}
-                
-                """
-                    "first_name": user.first_name,
-                    "last_name": user.last_name,
-                    "user_type": user.get_user_type_display(),
-                    "password": password,
-                    "client_id": client_id,
-                    "client_secret": client_secret,
-                """
                 
                 photo = ""
                 
@@ -225,6 +211,7 @@ class RequestPasswordResetEmail(generics.GenericAPIView):
                 )
                 redirect_url = request.data.get('redirect_url', '')
                 absurl = current_site + relativeLink  # a traduire
+                
                 """
                 email_body = _('Hello, \n Use link below to reset your password  \n') + \
                     absurl + "?redirect_url=" + redirect_url
