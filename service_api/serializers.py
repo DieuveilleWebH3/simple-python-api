@@ -83,6 +83,9 @@ class LoginSerializer(serializers.ModelSerializer):
                 "id": user.id,
                 "email": user.email,
                 "username": user.username,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "user_type": user.get_user_type_display(),  # get_enquete_type_display()
                 "password": password,
                 "client_id": client_id,
                 "client_secret": client_secret,

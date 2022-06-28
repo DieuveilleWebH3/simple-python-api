@@ -145,6 +145,26 @@ class LoginAPIView(generics.GenericAPIView):
                     'token_type': res["token_type"],
                     'id_token': res["id_token"],
                 }}
+                
+                """
+                    "first_name": user.first_name,
+                    "last_name": user.last_name,
+                    "user_type": user.get_user_type_display(),
+                    "password": password,
+                    "client_id": client_id,
+                    "client_secret": client_secret,
+                """
+                
+                photo = ""
+                
+                response["first_name"] = user.first_name
+                response["last_name"] = user.last_name
+                response["user_type"] = user.get_user_type_display()
+                
+                if user.photo:
+                    photo = user.photo.url
+                    
+                response["photo"] = photo
 
                 response.update(serializer.data)
 
