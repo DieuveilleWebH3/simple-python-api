@@ -96,6 +96,19 @@ class LoginAPIView(generics.GenericAPIView):
     def post(self, request):
         serializer = self.serializer_class(data=request.data, context={"request": request})
 
+        try:
+            if 'username' in request.data:
+                if User.objects.get(username=request.data['username']):
+                    pass
+        except User.DoesNotExist:
+            return Response(
+                {
+                    "error": "User does not exist"
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+            
+             
         serializer.is_valid(raise_exception=True)
         login_data = serializer.validated_data
 
@@ -104,7 +117,7 @@ class LoginAPIView(generics.GenericAPIView):
         relativeLink = "/api/openid/token"
         # relativeLink = "/openid/token"
 
-        absurl = current_site + relativeLink
+        absurl = current_site + relativeLink 
         
         if "http://" not in absurl:
             absurl = f"http://{current_site}{relativeLink}"
@@ -120,13 +133,6 @@ class LoginAPIView(generics.GenericAPIView):
         user = User.objects.get(username=login_data['username'])
         
         try:
-
-            """
-                client id : 252055
-
-                client_secret : 6a10d8e2610e15cb70e27f09938cc3cee0cd03aa04c2f8d8f04509e3
-                
-            """
 
             if user.is_active:
                 output = requests.post(absurl, data=input_request, timeout=20)
@@ -163,7 +169,7 @@ class LoginAPIView(generics.GenericAPIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
         except Exception as e:
-            print('["ERROR"] >>>>>>>>>',e)
+            print('login error ["ERROR"] >>>>>>>>>',e)
             
             return Response(
                 {"error": _("Client authentication failed (e.g., unknown client,"
