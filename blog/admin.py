@@ -31,5 +31,12 @@ class ArticleAdmin(admin.ModelAdmin):
     filter_fields = ['author',]
     
     def categories(self, obj): 
-        return "\n \n".join([f'{t.title} , ' for t in obj.category.all()])
+        return "\n \n".join([f'{t.title} , ' for t in obj.category.all()]) 
+
+
+@admin.register(Comments)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ['id','name','article', 'content', "created_at", "modified_at"] 
+    search_fields = ['name', 'content', 'article__content' ] 
+    filter_fields = ['name', 'article']
 

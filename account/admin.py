@@ -18,7 +18,7 @@ from .models import *
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ['first_name','last_name','username', 'email', 'user_type', 'is_active',] 
+    list_display = ['id', 'first_name','last_name','username', 'email', 'user_type', 'is_active',] 
     search_fields = ['username', 'email' ] 
     filter_fields = ['user_type', 'is_active'] 
     
