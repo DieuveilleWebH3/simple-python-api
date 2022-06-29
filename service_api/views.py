@@ -342,17 +342,13 @@ class CategoryViewSet(ModelViewSet):
             for category in category_objects:
 
                 article_of_category = Articles.objects.filter(category=category)
-                
-                print("\n")
-                print("*************************** Articles in Category ****************** ")
-                print(article_of_category)
 
-                articles = [{'id':d.id, 'author': model_to_dict(d.author), 'title':d.title, 'slug': d.slug, 'read_by': d.read_by, 'liked_by': d.liked_by} for d in article_of_category]
-                # articles = [{'id':d.id, 'title':d.title, 'slug': d.slug, 'read_by': d.read_by, 'liked_by': d.liked_by} for d in article_of_category]
+                articles = [{'id':d.id, 'author': {'id':d.author.id, 'username':d.author.username, 'user_type': d.author.get_user_type_display() }, 'title':d.title, 'slug': d.slug, 'read_by': d.read_by, 'liked_by': d.liked_by} for d in article_of_category]
+                # articles = [{'id':d.id, 'author': model_to_dict(d.author), 'title':d.title, 'slug': d.slug, 'read_by': d.read_by, 'liked_by': d.liked_by} for d in article_of_category]
                 
-                print("\n")
-                print("*************************** Articles in Category ****************** ")
-                print(articles)
+                # print("\n")
+                # print("*************************** Articles in Category ****************** ")
+                # print(articles)
                 
                 one_category = {
                     'id': category.id,
@@ -393,9 +389,9 @@ class CategoryViewSet(ModelViewSet):
                         status=status.HTTP_200_OK,
                     )
             else:
-                print("\n")
-                print("*************************** Self Queryset Category ****************** ")
-                print(self.queryset)
+                # print("\n")
+                # print("*************************** Self Queryset Category ****************** ")
+                # print(self.queryset)
                 
                 category_list = self.get_list_of_category(self.queryset)
 
