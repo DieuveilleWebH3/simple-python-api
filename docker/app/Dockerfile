@@ -51,6 +51,6 @@ WORKDIR /app
 COPY . /app
 
 
-# CMD ["python", "/app/manage.py", "runserver", "0.0.0.0:8000"]
-CMD ["python", "/app/manage.py", "runserver", "0.0.0.0:8019"]
+# CMD ["python", "/app/manage.py", "runserver", "0.0.0.0:8019"]
+CMD ["python", "/app/manage.py", "runserver", "0.0.0.0:8022"]
 

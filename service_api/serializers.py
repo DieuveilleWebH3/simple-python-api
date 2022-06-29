@@ -1,9 +1,11 @@
 from django.contrib.auth import authenticate, login, get_user_model
 from django.contrib import auth
-from rest_framework import serializers
+from rest_framework import serializers 
+# from rest_framework.serializers import FileField
 from rest_framework.exceptions import AuthenticationFailed
 
 from account.models import *
+from blog.models import *
 
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
@@ -136,4 +138,29 @@ class SetNewPasswordSerializer(serializers.Serializer):
             raise AuthenticationFailed('The reset link is invalid', 401)
 
         return super().validate(attrs)
+
+
+
+# ******************************************************* 
+# *****                                             *****
+# *****            Blog Web Service              *****
+# *****                                             *****
+# *******************************************************
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ["id", "title", "slug", "created_at", "modified_at"]
+            
+            
+class ArticleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Articles
+        fields = ["id", "author", "category", "title", "slug", "content", "read_by", "liked_by", "created_at", "modified_at"]            
+            
+            
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comments
+        fields = ["id", "name", "article", "content", "created_at", "modified_at"]
 

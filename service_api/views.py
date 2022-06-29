@@ -318,3 +318,288 @@ class SetNewPasswordAPIView(generics.GenericAPIView):
             status=status.HTTP_200_OK
         )
 
+
+class CategoryViewSet(ModelViewSet):
+    serializer_class = CategorySerializer
+    queryset = Category.objects.all().order_by('title')
+
+    lookup_field = "slug"
+
+    def get_serializer(self, data):
+        return self.serializer_class(data=data)
+    
+    def perform_create(self, serializer):
+        serializer.save()
+    
+    def get_list_of_category(self, category_objects):
+        category_list = [] 
+        
+        try:
+            for category in category_objects:
+
+                article_of_category = Articles.objects.filter(category=category)
+
+                articles = [{'id':d.id, 'author':d.author, 'title':d.title, 'slug': d.slug, 'read_by': d.read_by, 'liked_by': d.liked_by} for d in article_of_category]
+                
+                one_category = {
+                    'id': category.id,
+                    'title': category.title,
+                    'slug': category.slug,
+                    'articles': articles,
+                    'created_at': category.created_at.timestamp(),
+                    'modified_at': category.modified_at.timestamp()
+                }
+
+                category_list.append(one_category)
+
+            return category_list
+        except Exception as e:
+            raise ValidationError(f'[ERR]: category error ==> {e}')
+
+    slug = openapi.Parameter('slug', in_=openapi.IN_QUERY, description='category\'s slug', type=openapi.TYPE_STRING)
+
+    @swagger_auto_schema(
+        manual_parameters=[slug])
+
+    def list(self, request, *args, **kwargs):
+        slug = request.query_params.get('slug', None)
+        category_list = []
+
+        try:
+
+            if slug:
+                
+                category = Category.objects.filter(slug=slug)
+                # if category.exists():
+                if category:
+                    
+                    category_list = self.get_list_of_category(category)
+
+                    return HttpResponse(
+                        json.dumps(category_list),
+                        status=status.HTTP_200_OK,
+                    )
+            else:
+                category_list = self.get_list_of_category(self.queryset)
+
+            return HttpResponse(
+                    json.dumps(category_list),
+                    status=status.HTTP_200_OK,
+                )
+        except Exception as e:
+            return Response(
+                f'category not found => [ERR]: {e}',
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    @swagger_auto_schema(
+        request_body=CategorySerializer,
+        responses = {
+            '200' : 'HttpResponse status 201',
+            '400': 'category has not been created',
+        },
+    )
+
+    def create(self, request, *args, **kwargs):
+        try:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            # headers = self.get_success_headers(serializer.data)
+            # return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        except Exception as e:
+            return Response(json.dumps({
+                    # "message": 'category with this title already exists.' if 'unique' in str(e) else str(e),
+                    "message": str(e),
+                    "data": json.dumps(request.data)
+                }), status=status.HTTP_400_BAD_REQUEST)
+
+
+    @swagger_auto_schema(
+        request_body=CategorySerializer,
+        responses = {
+            '200' : 'HttpResponse status 200',
+            '400': 'category has not been updated',
+        },
+    )
+
+    def update(self, request, slug, *args, **kwargs):
+
+        try:
+            
+            category = Category.objects.get(slug=slug)
+
+            if category:
+                
+                serializer = CategorySerializer(category, data=request.data)
+                # serializer = self.get_serializer(data=request.data)
+                serializer.is_valid(raise_exception=True)
+
+                serializer.save()
+
+                print("\n")
+                print("******************** Serializer category Put Method *********************")
+                print("\n")
+                print(serializer.data)
+
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            
+            else:
+                return Response(json.dumps({
+                    "message": "category with that slug does not exist",
+                    "data": json.dumps(request.data)
+                }), status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            return Response(json.dumps({
+                    # "message": 'category with this title already exists.' if 'unique' in str(e) else str(e),
+                    "message": str(e),
+                    "data": json.dumps(request.data)
+                }), status=status.HTTP_400_BAD_REQUEST)
+
+class CategoryViewSet(ModelViewSet):
+    serializer_class = CategorySerializer
+    queryset = Category.objects.all().order_by('title')
+
+    lookup_field = "slug"
+
+    def get_serializer(self, data):
+        return self.serializer_class(data=data)
+    
+    def perform_create(self, serializer):
+        serializer.save()
+    
+    def get_list_of_category(self, category_objects):
+        category_list = [] 
+        
+        try:
+            for category in category_objects:
+
+                article_of_category = Articles.objects.filter(category=category)
+
+                articles = [{'id':d.id, 'author':d.author, 'title':d.title, 'slug': d.slug, 'read_by': d.read_by, 'liked_by': d.liked_by} for d in article_of_category]
+                
+                one_category = {
+                    'id': category.id,
+                    'title': category.title,
+                    'slug': category.slug,
+                    'articles': articles,
+                    'created_at': category.created_at.timestamp(),
+                    'modified_at': category.modified_at.timestamp()
+                }
+
+                category_list.append(one_category)
+
+            return category_list
+        except Exception as e:
+            raise ValidationError(f'[ERR]: category error ==> {e}')
+
+    slug = openapi.Parameter('slug', in_=openapi.IN_QUERY, description='category\'s slug', type=openapi.TYPE_STRING)
+
+    @swagger_auto_schema(
+        manual_parameters=[slug])
+
+    def list(self, request, *args, **kwargs):
+        slug = request.query_params.get('slug', None)
+        category_list = []
+
+        try:
+
+            if slug:
+                
+                category = Category.objects.filter(slug=slug)
+                # if category.exists():
+                if category:
+                    
+                    category_list = self.get_list_of_category(category)
+
+                    return HttpResponse(
+                        json.dumps(category_list),
+                        status=status.HTTP_200_OK,
+                    )
+            else:
+                category_list = self.get_list_of_category(self.queryset)
+
+            return HttpResponse(
+                    json.dumps(category_list),
+                    status=status.HTTP_200_OK,
+                )
+        except Exception as e:
+            return Response(
+                f'category not found => [ERR]: {e}',
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    @swagger_auto_schema(
+        request_body=CategorySerializer,
+        responses = {
+            '200' : 'HttpResponse status 201',
+            '400': 'category has not been created',
+        },
+    )
+
+    def create(self, request, *args, **kwargs):
+        try:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            # headers = self.get_success_headers(serializer.data)
+            # return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        except Exception as e:
+            return Response(json.dumps({
+                    # "message": 'category with this title already exists.' if 'unique' in str(e) else str(e),
+                    "message": str(e),
+                    "data": json.dumps(request.data)
+                }), status=status.HTTP_400_BAD_REQUEST)
+
+
+    @swagger_auto_schema(
+        request_body=CategorySerializer,
+        responses = {
+            '200' : 'HttpResponse status 200',
+            '400': 'category has not been updated',
+        },
+    )
+
+    def update(self, request, slug, *args, **kwargs):
+
+        try:
+            
+            category = Category.objects.get(slug=slug)
+
+            if category:
+                
+                serializer = CategorySerializer(category, data=request.data)
+                # serializer = self.get_serializer(data=request.data)
+                serializer.is_valid(raise_exception=True)
+
+                serializer.save()
+
+                print("\n")
+                print("******************** Serializer category Put Method *********************")
+                print("\n")
+                print(serializer.data)
+
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            
+            else:
+                return Response(json.dumps({
+                    "message": "category with that slug does not exist",
+                    "data": json.dumps(request.data)
+                }), status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            return Response(json.dumps({
+                    # "message": 'category with this title already exists.' if 'unique' in str(e) else str(e),
+                    "message": str(e),
+                    "data": json.dumps(request.data)
+                }), status=status.HTTP_400_BAD_REQUEST)
+
+
+

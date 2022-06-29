@@ -10,13 +10,15 @@ services:
 
       restart: always
       ports:
-         - '8019:8019'
+         # - '8019:8019'
+         - '8022:8022'
       # network_mode: npm_default         
       volumes:
          - ./:/app
       environment:
          - PYTHONUNBUFFERED=1
-      command: bash -c "python3 /app/manage.py makemigrations && python3 /app/manage.py migrate && python3 /app/manage.py runserver 0.0.0.0:8019"
+      # command: bash -c "python3 /app/manage.py makemigrations && python3 /app/manage.py migrate && python3 /app/manage.py runserver 0.0.0.0:8019"
+      command: bash -c "python3 /app/manage.py makemigrations && python3 /app/manage.py migrate && python3 /app/manage.py runserver 0.0.0.0:8022"
       deploy:
          resources:
            limits:
