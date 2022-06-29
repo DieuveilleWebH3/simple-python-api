@@ -520,6 +520,7 @@ class ArticleViewSet(ModelViewSet):
         except Exception as e:
             raise ValidationError(f'[ERR]: article error ==> {e}')
 
+        
     slug = openapi.Parameter('slug', in_=openapi.IN_QUERY, description='article\'s slug', type=openapi.TYPE_STRING)
 
     @swagger_auto_schema(
@@ -555,6 +556,52 @@ class ArticleViewSet(ModelViewSet):
                 f'article not found => [ERR]: {e}',
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+    user_id = openapi.Parameter('user_id', in_=openapi.IN_QUERY, description='user\'s id', type=openapi.TYPE_INTEGER)
+
+    @swagger_auto_schema(
+        manual_parameters=[user_id])
+    
+    def user_articles(self, request, *args, **kwargs):
+        print("\n")
+        print("*************************** In function user_articles ***************************")
+        print("\n")
+        
+        user_id = request.query_params.get('user_id', None)
+        articles_list = []
+
+        try:
+
+            if user_id:
+                
+                print("\n")
+                print("*************************** printing user id ***************************")
+                print(user_id)
+                
+                article = Articles.objects.filter(author__id=user_id)
+                # if article.exists():
+                if article:
+                    
+                    articles_list = self.get_list_of_articles(article)
+
+                    return HttpResponse(
+                        json.dumps(articles_list),
+                        status=status.HTTP_200_OK,
+                    )
+            else:
+                articles_list = self.get_list_of_articles(self.queryset)
+
+            return HttpResponse(
+                    json.dumps(articles_list),
+                    status=status.HTTP_200_OK,
+                )
+        except Exception as e:
+            return Response(
+                f'article not found => [ERR]: {e}',
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        
 
     @swagger_auto_schema(
         request_body=ArticleSerializer,
@@ -625,4 +672,85 @@ class ArticleViewSet(ModelViewSet):
                 }), status=status.HTTP_400_BAD_REQUEST)
 
 
+class UserArticleViewSet(ModelViewSet):
+    serializer_class = ArticleSerializer
+    queryset = Articles.objects.all().order_by('-id')
 
+    # lookup_field = "slug"
+    lookup_field = "id"
+
+    def get_serializer(self, data):
+        return self.serializer_class(data=data)
+    
+    def perform_create(self, serializer):
+        serializer.save()
+    
+    def get_list_of_articles(self, articles_objects):
+        articles_list = [] 
+        
+        try:
+            for article in articles_objects:
+
+                category_of_article = article.category.all()
+
+                categories = [{'id':c.id, 'title':c.title, 'slug': c.slug} for c in category_of_article]
+                
+                one_article = {
+                    'id': article.id,
+                    'title': article.title,
+                    'slug': article.slug, 
+                    'read_by': article.read_by, 
+                    'liked_by': article.liked_by,
+                    'categories': categories,
+                    'created_at': article.created_at.timestamp(),
+                    'modified_at': article.modified_at.timestamp()
+                }
+
+                articles_list.append(one_article)
+
+            return articles_list
+        except Exception as e:
+            raise ValidationError(f'[ERR]: article error ==> {e}')
+
+    # user_id = openapi.Parameter('user_id', in_=openapi.IN_QUERY, description='user\'s id', type=openapi.TYPE_INTEGER)
+    user_id = openapi.Parameter('user_id', in_=openapi.IN_QUERY, description='user\'s id', type=openapi.TYPE_STRING)
+
+    @swagger_auto_schema(
+        manual_parameters=[user_id])
+    
+    def list(self, request, *args, **kwargs):
+        user_id = request.query_params.get('user_id', None)
+        articles_list = []
+
+        try:
+
+            if user_id:
+                
+                article = Articles.objects.filter(author__id=int(user_id))
+                # if article.exists():
+                if article:
+                    
+                    articles_list = self.get_list_of_articles(article)
+
+                    return HttpResponse(
+                        json.dumps(articles_list),
+                        status=status.HTTP_200_OK,
+                    )
+            else:
+                return Response(
+                    f'this user has no articles => [ERR]: {e}',
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            return HttpResponse(
+                    json.dumps(articles_list),
+                    status=status.HTTP_200_OK,
+                )
+        except Exception as e:
+            return Response(
+                f'this user has no articles => [ERR]: {e}',
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        
+
+    
