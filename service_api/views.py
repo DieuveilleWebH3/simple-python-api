@@ -319,9 +319,13 @@ class SetNewPasswordAPIView(generics.GenericAPIView):
         )
 
 
+
+# *******************************************************
+
 class CategoryViewSet(ModelViewSet):
     serializer_class = CategorySerializer
-    queryset = Category.objects.all().order_by('title')
+    # queryset = Category.objects.all().order_by('title')
+    queryset = Category.objects.all().order_by('-created_at')
 
     lookup_field = "slug"
 
@@ -338,8 +342,17 @@ class CategoryViewSet(ModelViewSet):
             for category in category_objects:
 
                 article_of_category = Articles.objects.filter(category=category)
+                
+                print("\n")
+                print("*************************** Articles in Category ****************** ")
+                print(article_of_category)
 
-                articles = [{'id':d.id, 'author':d.author, 'title':d.title, 'slug': d.slug, 'read_by': d.read_by, 'liked_by': d.liked_by} for d in article_of_category]
+                articles = [{'id':d.id, 'author': model_to_dict(d.author), 'title':d.title, 'slug': d.slug, 'read_by': d.read_by, 'liked_by': d.liked_by} for d in article_of_category]
+                # articles = [{'id':d.id, 'title':d.title, 'slug': d.slug, 'read_by': d.read_by, 'liked_by': d.liked_by} for d in article_of_category]
+                
+                print("\n")
+                print("*************************** Articles in Category ****************** ")
+                print(articles)
                 
                 one_category = {
                     'id': category.id,
@@ -380,6 +393,10 @@ class CategoryViewSet(ModelViewSet):
                         status=status.HTTP_200_OK,
                     )
             else:
+                print("\n")
+                print("*************************** Self Queryset Category ****************** ")
+                print(self.queryset)
+                
                 category_list = self.get_list_of_category(self.queryset)
 
             return HttpResponse(
@@ -460,9 +477,10 @@ class CategoryViewSet(ModelViewSet):
                     "data": json.dumps(request.data)
                 }), status=status.HTTP_400_BAD_REQUEST)
 
-class CategoryViewSet(ModelViewSet):
-    serializer_class = CategorySerializer
-    queryset = Category.objects.all().order_by('title')
+
+class ArticleViewSet(ModelViewSet):
+    serializer_class = ArticleSerializer
+    queryset = Articles.objects.all().order_by('-id')
 
     lookup_field = "slug"
 
@@ -472,72 +490,75 @@ class CategoryViewSet(ModelViewSet):
     def perform_create(self, serializer):
         serializer.save()
     
-    def get_list_of_category(self, category_objects):
-        category_list = [] 
+    def get_list_of_articles(self, articles_objects):
+        articles_list = [] 
         
         try:
-            for category in category_objects:
+            for article in articles_objects:
 
-                article_of_category = Articles.objects.filter(category=category)
+                category_of_article = article.category.all()
 
-                articles = [{'id':d.id, 'author':d.author, 'title':d.title, 'slug': d.slug, 'read_by': d.read_by, 'liked_by': d.liked_by} for d in article_of_category]
+                categories = [{'id':c.id, 'title':c.title, 'slug': c.slug} for c in category_of_article]
                 
-                one_category = {
-                    'id': category.id,
-                    'title': category.title,
-                    'slug': category.slug,
-                    'articles': articles,
-                    'created_at': category.created_at.timestamp(),
-                    'modified_at': category.modified_at.timestamp()
+                one_article = {
+                    'id': article.id,
+                    'author': model_to_dict(article.author),
+                    'title': article.title,
+                    'slug': article.slug, 
+                    'read_by': article.read_by, 
+                    'liked_by': article.liked_by,
+                    'categories': categories,
+                    'created_at': article.created_at.timestamp(),
+                    'modified_at': article.modified_at.timestamp()
                 }
 
-                category_list.append(one_category)
+                articles_list.append(one_article)
 
-            return category_list
+            return articles_list
         except Exception as e:
-            raise ValidationError(f'[ERR]: category error ==> {e}')
+            raise ValidationError(f'[ERR]: article error ==> {e}')
 
-    slug = openapi.Parameter('slug', in_=openapi.IN_QUERY, description='category\'s slug', type=openapi.TYPE_STRING)
+    slug = openapi.Parameter('slug', in_=openapi.IN_QUERY, description='article\'s slug', type=openapi.TYPE_STRING)
 
     @swagger_auto_schema(
         manual_parameters=[slug])
 
     def list(self, request, *args, **kwargs):
         slug = request.query_params.get('slug', None)
-        category_list = []
+        articles_list = []
 
         try:
 
             if slug:
                 
-                category = Category.objects.filter(slug=slug)
-                # if category.exists():
-                if category:
+                article = Articles.objects.filter(slug=slug)
+                # if article.exists():
+                if article:
                     
-                    category_list = self.get_list_of_category(category)
+                    articles_list = self.get_list_of_articles(article)
 
                     return HttpResponse(
-                        json.dumps(category_list),
+                        json.dumps(articles_list),
                         status=status.HTTP_200_OK,
                     )
             else:
-                category_list = self.get_list_of_category(self.queryset)
+                articles_list = self.get_list_of_articles(self.queryset)
 
             return HttpResponse(
-                    json.dumps(category_list),
+                    json.dumps(articles_list),
                     status=status.HTTP_200_OK,
                 )
         except Exception as e:
             return Response(
-                f'category not found => [ERR]: {e}',
+                f'article not found => [ERR]: {e}',
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
     @swagger_auto_schema(
-        request_body=CategorySerializer,
+        request_body=ArticleSerializer,
         responses = {
             '200' : 'HttpResponse status 201',
-            '400': 'category has not been created',
+            '400': 'article has not been created',
         },
     )
 
@@ -560,10 +581,10 @@ class CategoryViewSet(ModelViewSet):
 
 
     @swagger_auto_schema(
-        request_body=CategorySerializer,
+        request_body=ArticleSerializer,
         responses = {
             '200' : 'HttpResponse status 200',
-            '400': 'category has not been updated',
+            '400': 'article has not been updated',
         },
     )
 
@@ -571,18 +592,18 @@ class CategoryViewSet(ModelViewSet):
 
         try:
             
-            category = Category.objects.get(slug=slug)
+            article = Articles.objects.get(slug=slug)
 
-            if category:
+            if article:
                 
-                serializer = CategorySerializer(category, data=request.data)
+                serializer = ArticleSerializer(article, data=request.data)
                 # serializer = self.get_serializer(data=request.data)
                 serializer.is_valid(raise_exception=True)
 
                 serializer.save()
 
                 print("\n")
-                print("******************** Serializer category Put Method *********************")
+                print("******************** Serializer article Put Method *********************")
                 print("\n")
                 print(serializer.data)
 
@@ -590,7 +611,7 @@ class CategoryViewSet(ModelViewSet):
             
             else:
                 return Response(json.dumps({
-                    "message": "category with that slug does not exist",
+                    "message": "article with that slug does not exist",
                     "data": json.dumps(request.data)
                 }), status=status.HTTP_400_BAD_REQUEST)
 
