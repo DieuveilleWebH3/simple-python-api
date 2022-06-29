@@ -313,6 +313,9 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:9529",
     "http://127.0.0.1:9529",
     "http://192.168.107.183:9529",
+    "http://localhost:9528",
+    "http://127.0.0.1:9528",
+    "http://10.21.0.29:9528/",
 ]
 
 CORS_ALLOW_METHODS = [
