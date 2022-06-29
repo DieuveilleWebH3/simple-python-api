@@ -24,7 +24,7 @@ class User(AbstractUser):
     ACCOUNT_TYPE_CHOICES = ( 
         ('0', 'Publisher'), 
         ('1',  'Author'),
-    )
+    ) 
     
     def get_upload_path(self, filename):
         
