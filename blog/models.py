@@ -25,6 +25,7 @@ import os
 class Category(models.Model):
     title = models.CharField(max_length=255, unique=True, blank=False, null=False)
     slug = models.CharField(max_length=255, unique=True)
+    decription = models.CharField(max_length=255, null=True, blank=True, default="")
 
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
