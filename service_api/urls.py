@@ -66,6 +66,10 @@ urlpatterns = [
     path('category/', CategoryViewSet.as_view({'get': 'list', 'post':'create'}), name="category"), 
     path('category/<slug>', CategoryViewSet.as_view({'put': 'update'}), name='category'),
     
+    # 
+    path('articles/', ArticleViewSet.as_view({'get': 'list', 'post':'create'}), name="articles"), 
+    path('articles/<slug>', ArticleViewSet.as_view({'put': 'update'}), name='articles'),
+    
 ]
 
 

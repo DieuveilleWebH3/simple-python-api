@@ -12,7 +12,7 @@ services:
       ports:
          # - '8019:8019'
          - '8022:8022'
-      # network_mode: npm_default         
+      network_mode: npm_default         
       volumes:
          - ./:/app
       environment:
