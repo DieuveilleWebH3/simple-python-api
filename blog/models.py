@@ -44,10 +44,10 @@ class Articles(models.Model):
     slug = models.CharField(max_length=255, unique=True)
     content = models.TextField(null=True, blank=True)
     
-    read_by = models.IntegerField()
-    liked_by = models.IntegerField()
+    read_by = models.IntegerField(default=0)
+    liked_by = models.IntegerField(default=0)
     
-    photo = models.ImageField(upload_to="media", null=True, blank=True)
+    photo = models.ImageField(upload_to="article_photos", null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
@@ -68,7 +68,7 @@ class PublishGroups(models.Model):
     
     desciption = models.TextField(null=True, blank=True)
     
-    photo = models.ImageField(upload_to="media", null=True, blank=True)
+    photo = models.ImageField(upload_to="group_photos", null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
