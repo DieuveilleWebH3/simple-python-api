@@ -164,3 +164,13 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comments
         fields = ["id", "name", "article", "content", "created_at", "modified_at"]
 
+
+
+class UserSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = User
+        fields = ["id", "first_name", "last_name", "username", "email", "user_type", "created_at", "modified_at"]
+        
+        
+        
