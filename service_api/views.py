@@ -343,7 +343,7 @@ class CategoryViewSet(ModelViewSet):
 
                 article_of_category = Articles.objects.filter(category=category)
 
-                articles = [{'id':d.id, 'author': {'id':d.author.id, 'username':d.author.username, 'user_type': d.author.get_user_type_display() }, 'title':d.title, 'slug': d.slug, 'read_by': d.read_by, 'liked_by': d.liked_by} for d in article_of_category]
+                articles = [{'id':d.id, 'author': {'id':d.author.id, 'username':d.author.username, 'user_type': d.author.get_user_type_display()}, 'title':d.title, 'slug': d.slug, 'read_by': d.read_by, 'liked_by': d.liked_by} for d in article_of_category]
                 # articles = [{'id':d.id, 'author': model_to_dict(d.author), 'title':d.title, 'slug': d.slug, 'read_by': d.read_by, 'liked_by': d.liked_by} for d in article_of_category]
                 
                 # print("\n")
@@ -453,10 +453,10 @@ class CategoryViewSet(ModelViewSet):
 
                 serializer.save()
 
-                print("\n")
-                print("******************** Serializer category Put Method *********************")
-                print("\n")
-                print(serializer.data)
+                # print("\n")
+                # print("******************** Serializer category Put Method *********************")
+                # print("\n")
+                # print(serializer.data)
 
                 return Response(serializer.data, status=status.HTTP_200_OK)
             
@@ -498,7 +498,7 @@ class ArticleViewSet(ModelViewSet):
                 
                 one_article = {
                     'id': article.id,
-                    'author': model_to_dict(article.author),
+                    'author': {'id':article.author.id, 'username':article.author.username, 'user_type': article.author.get_user_type_display() },
                     'title': article.title,
                     'slug': article.slug, 
                     'read_by': article.read_by, 
@@ -598,10 +598,10 @@ class ArticleViewSet(ModelViewSet):
 
                 serializer.save()
 
-                print("\n")
-                print("******************** Serializer article Put Method *********************")
-                print("\n")
-                print(serializer.data)
+                # print("\n")
+                # print("******************** Serializer article Put Method *********************")
+                # print("\n")
+                # print(serializer.data)
 
                 return Response(serializer.data, status=status.HTTP_200_OK)
             
