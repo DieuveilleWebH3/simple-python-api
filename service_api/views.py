@@ -518,17 +518,39 @@ class ArticleViewSet(ModelViewSet):
 
         
     slug = openapi.Parameter('slug', in_=openapi.IN_QUERY, description='article\'s slug', type=openapi.TYPE_STRING)
+    
+    user_id = openapi.Parameter('user_id', in_=openapi.IN_QUERY, description='user\'s id', type=openapi.TYPE_INTEGER)
+    # user_id = openapi.Parameter('user_id', in_=openapi.IN_QUERY, description='user\'s id', type=openapi.TYPE_STRING)
+    
 
     @swagger_auto_schema(
-        manual_parameters=[slug])
+        manual_parameters=[slug, user_id])
 
     def list(self, request, *args, **kwargs):
         slug = request.query_params.get('slug', None)
+        user_id = request.query_params.get('user_id', None)
+        
         articles_list = []
 
         try:
+            if user_id:
+                
+                print("\n")
+                print("*************************** printing user id ***************************")
+                print(user_id)
+                
+                article = Articles.objects.filter(author__id=user_id)
+                # if article.exists():
+                if article:
+                    
+                    articles_list = self.get_list_of_articles(article)
 
-            if slug:
+                    return HttpResponse(
+                        json.dumps(articles_list),
+                        status=status.HTTP_200_OK,
+                    )
+
+            elif slug:
                 
                 article = Articles.objects.filter(slug=slug)
                 # if article.exists():
@@ -554,10 +576,9 @@ class ArticleViewSet(ModelViewSet):
             )
 
 
-    user_id = openapi.Parameter('user_id', in_=openapi.IN_QUERY, description='user\'s id', type=openapi.TYPE_INTEGER)
 
-    @swagger_auto_schema(
-        manual_parameters=[user_id])
+    # @swagger_auto_schema(
+    #     manual_parameters=[user_id])
     
     def user_articles(self, request, *args, **kwargs):
         print("\n")
@@ -668,6 +689,7 @@ class ArticleViewSet(ModelViewSet):
                 }), status=status.HTTP_400_BAD_REQUEST)
 
 
+
 class UserArticleViewSet(ModelViewSet):
     serializer_class = ArticleSerializer
     queryset = Articles.objects.all().order_by('-id')
@@ -708,8 +730,8 @@ class UserArticleViewSet(ModelViewSet):
         except Exception as e:
             raise ValidationError(f'[ERR]: article error ==> {e}')
 
-    # user_id = openapi.Parameter('user_id', in_=openapi.IN_QUERY, description='user\'s id', type=openapi.TYPE_INTEGER)
-    user_id = openapi.Parameter('user_id', in_=openapi.IN_QUERY, description='user\'s id', type=openapi.TYPE_STRING)
+    user_id = openapi.Parameter('user_id', in_=openapi.IN_QUERY, description='user\'s id', type=openapi.TYPE_INTEGER)
+    # user_id = openapi.Parameter('user_id', in_=openapi.IN_QUERY, description='user\'s id', type=openapi.TYPE_STRING)
 
     @swagger_auto_schema(
         manual_parameters=[user_id])

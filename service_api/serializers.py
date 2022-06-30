@@ -171,6 +171,12 @@ class PublishGroupsSerializer(serializers.ModelSerializer):
         fields = ["id", "publisher", "articles", "description", "photo", "created_at", "modified_at"]
 
 
+class DemandsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Demands
+        fields = ["id", "author", "publish_group", "article", "content", "created_at", "modified_at"]
+
+
 
 class UserSerializer(serializers.ModelSerializer):
     
