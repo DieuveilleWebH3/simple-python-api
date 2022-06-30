@@ -1,4 +1,5 @@
 from ast import Delete
+from time import sleep
 from django.shortcuts import render, redirect, get_object_or_404, reverse
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponsePermanentRedirect
 # from django.contrib.auth.models import User
@@ -332,8 +333,8 @@ class SetNewPasswordAPIView(generics.GenericAPIView):
 # ********************************************** DONE *********************************************************
 class CategoryViewSet(ModelViewSet):
     serializer_class = CategorySerializer
-    # queryset = Category.objects.all().order_by('title')
     queryset = Category.objects.all().order_by('-created_at')
+    # get_queryset = Category.objects.all().order_by('-created_at')
 
     lookup_field = "slug"
 
@@ -394,7 +395,13 @@ class CategoryViewSet(ModelViewSet):
                     )
             else:
                 
-                category_list = self.get_list_of_category(self.queryset)
+                # works but is cached,so only sending old list / queryset .. => to change 
+                # category_list = self.get_list_of_category(self.queryset) 
+                
+                # return methods which is not iterable, look into it, harder
+                # category_list = self.get_list_of_category(self.get_queryset)  
+                
+                category_list = self.get_list_of_category(Category.objects.all().order_by('-created_at'))
 
             return HttpResponse(
                     json.dumps(category_list),
@@ -558,7 +565,8 @@ class ArticleViewSet(ModelViewSet):
                         status=status.HTTP_200_OK,
                     )
             else:
-                articles_list = self.get_list_of_articles(self.queryset)
+                # articles_list = self.get_list_of_articles(self.queryset)
+                articles_list = self.get_list_of_articles(Articles.objects.all().order_by('-id'))
 
             return HttpResponse(
                     json.dumps(articles_list),
