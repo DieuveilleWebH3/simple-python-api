@@ -43,6 +43,7 @@ class CommentAdmin(admin.ModelAdmin):
 
 @admin.register(PublishGroups)
 class PublishGroupsAdmin(admin.ModelAdmin):
+    prepopulated_fields = {"slug": ("title",)} 
     list_display = ['id','publisher','articles', 'title', 'slug', 'description', "created_at", "modified_at"] 
     search_fields = ['title', 'description' ] 
     filter_fields = ['publisher']

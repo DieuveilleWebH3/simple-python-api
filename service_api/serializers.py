@@ -168,7 +168,7 @@ class CommentSerializer(serializers.ModelSerializer):
 class PublishGroupsSerializer(serializers.ModelSerializer):
     class Meta:
         model = PublishGroups
-        fields = ["id", "publisher", "articles", "description", "photo", "created_at", "modified_at"]
+        fields = ["id", "publisher", "title", "slug", "description", "articles", "description", "photo", "created_at", "modified_at"]
 
 
 class DemandsSerializer(serializers.ModelSerializer):
