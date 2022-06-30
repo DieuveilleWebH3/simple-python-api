@@ -395,18 +395,20 @@ class CategoryViewSet(ModelViewSet):
                     )
             else:
                 
-                print("\n")
-                print("*************************** Queryset issue ***********************")
-                print("\n")
-                print(self.get_queryset)
+                # print("\n")
+                # print("*************************** Queryset issue ***********************")
+                # print("\n")
+                # print(self.get_queryset)
                 
-                sleep(9)
+                # sleep(9)
                 
-                # category_list = self.get_list_of_category(self.queryset)
+                # works but is cached, .. => to change 
+                # category_list = self.get_list_of_category(self.queryset) 
                 
-                category_list = self.get_list_of_category(self.get_queryset)  # return methods whiwh is not iterable
+                # return methods which is not iterable
+                # category_list = self.get_list_of_category(self.get_queryset)  
                 
-                # category_list = self.get_get_list_of_category(self.queryset) # get_queryset
+                category_list = self.get_list_of_category(Category.objects.all().order_by('-created_at'))
 
             return HttpResponse(
                     json.dumps(category_list),
