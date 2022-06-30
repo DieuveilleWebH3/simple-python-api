@@ -40,3 +40,13 @@ class CommentAdmin(admin.ModelAdmin):
     search_fields = ['name', 'content', 'article__content' ] 
     filter_fields = ['name', 'article']
 
+
+@admin.register(PublishGroups)
+class PublishGroupsAdmin(admin.ModelAdmin):
+    list_display = ['id','publisher','articles', 'title', 'slug', 'description', "created_at", "modified_at"] 
+    search_fields = ['title', 'description' ] 
+    filter_fields = ['publisher']
+    
+    def articles(self, obj): 
+        return "\n \n".join([f'{t.title} , ' for t in obj.articles.all()]) 
+
