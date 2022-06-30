@@ -333,8 +333,8 @@ class SetNewPasswordAPIView(generics.GenericAPIView):
 # ********************************************** DONE *********************************************************
 class CategoryViewSet(ModelViewSet):
     serializer_class = CategorySerializer
-    # queryset = Category.objects.all().order_by('title')
-    queryset = Category.objects.all().order_by('-created_at')
+    # queryset = Category.objects.all().order_by('-created_at')
+    get_queryset = Category.objects.all().order_by('-created_at')
 
     lookup_field = "slug"
 
@@ -403,7 +403,9 @@ class CategoryViewSet(ModelViewSet):
                 sleep(9)
                 
                 # category_list = self.get_list_of_category(self.queryset)
-                category_list = self.get_list_of_category(self.get_queryset)
+                
+                category_list = self.get_list_of_category(self.get_queryset)  # return methods whiwh is not iterable
+                
                 # category_list = self.get_get_list_of_category(self.queryset) # get_queryset
 
             return HttpResponse(
