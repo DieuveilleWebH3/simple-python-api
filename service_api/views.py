@@ -871,6 +871,7 @@ class CommentsViewSet(ModelViewSet):
                 }), status=status.HTTP_400_BAD_REQUEST)
 
 
+
 # ********************************* DONE ************************************************
 class PublishGroupsViewSet(ModelViewSet):
     serializer_class = PublishGroupsSerializer
@@ -976,6 +977,42 @@ class PublishGroupsViewSet(ModelViewSet):
     def create(self, request, *args, **kwargs):
         try:
             serializer = self.get_serializer(data=request.data)
+            
+            if "articles" not in request.data:
+                return Response(json.dumps({
+                    # "message": 'category with this title already exists.' if 'unique' in str(e) else str(e),
+                    "message": "You must provide at least an article id !",
+                    "data": json.dumps(request.data)
+                }), status=status.HTTP_400_BAD_REQUEST)
+                
+            if "publisher" not in request.data:
+                return Response(json.dumps({
+                    "message": "You must provide the publisher id !",
+                    "data": json.dumps(request.data)
+                }), status=status.HTTP_400_BAD_REQUEST)
+            
+            if not re.match(r'^([\s\d]+)$', str(request.data["publisher"]) ):
+                return Response(json.dumps({
+                    "message": "The publisher's id must be a digit !",
+                    "data": json.dumps(request.data)
+                }), status=status.HTTP_400_BAD_REQUEST)
+                
+            try:
+                the_publisher = User.objects.get(id=int(request.data["publisher"]))
+                
+                if not the_publisher:
+                    return Response(json.dumps({
+                        "message": "The publisher's id must be a digit !",
+                        "data": json.dumps(request.data)
+                    }), status=status.HTTP_400_BAD_REQUEST)
+                    
+            except Exception as e:
+                return Response(json.dumps({
+                        "message": str(e),
+                        "data": json.dumps(request.data)
+                    }), status=status.HTTP_400_BAD_REQUEST)
+                    
+            
             serializer.is_valid(raise_exception=True)
             self.perform_create(serializer)
             # headers = self.get_success_headers(serializer.data)
