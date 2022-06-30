@@ -1,3 +1,4 @@
+from ast import Delete
 from django.shortcuts import render, redirect, get_object_or_404, reverse
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponsePermanentRedirect
 # from django.contrib.auth.models import User
@@ -535,10 +536,6 @@ class ArticleViewSet(ModelViewSet):
         try:
             if user_id:
                 
-                print("\n")
-                print("*************************** printing user id ***************************")
-                print(user_id)
-                
                 article = Articles.objects.filter(author__id=user_id)
                 # if article.exists():
                 if article:
@@ -553,50 +550,6 @@ class ArticleViewSet(ModelViewSet):
             elif slug:
                 
                 article = Articles.objects.filter(slug=slug)
-                # if article.exists():
-                if article:
-                    
-                    articles_list = self.get_list_of_articles(article)
-
-                    return HttpResponse(
-                        json.dumps(articles_list),
-                        status=status.HTTP_200_OK,
-                    )
-            else:
-                articles_list = self.get_list_of_articles(self.queryset)
-
-            return HttpResponse(
-                    json.dumps(articles_list),
-                    status=status.HTTP_200_OK,
-                )
-        except Exception as e:
-            return Response(
-                f'article not found => [ERR]: {e}',
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-
-
-    # @swagger_auto_schema(
-    #     manual_parameters=[user_id])
-    
-    def user_articles(self, request, *args, **kwargs):
-        print("\n")
-        print("*************************** In function user_articles ***************************")
-        print("\n")
-        
-        user_id = request.query_params.get('user_id', None)
-        articles_list = []
-
-        try:
-
-            if user_id:
-                
-                print("\n")
-                print("*************************** printing user id ***************************")
-                print(user_id)
-                
-                article = Articles.objects.filter(author__id=user_id)
                 # if article.exists():
                 if article:
                     
@@ -688,6 +641,45 @@ class ArticleViewSet(ModelViewSet):
                     "data": json.dumps(request.data)
                 }), status=status.HTTP_400_BAD_REQUEST)
 
+
+    @swagger_auto_schema(
+        responses = {
+            '200' : 'HttpResponse status 200',
+            '400': 'article has not been deleted',
+        },
+    )
+    
+    def delete(self, request, slug, *args, **kwargs):
+        try:
+            
+            article = Articles.objects.get(slug=slug)
+
+            if article:
+                
+                if not PublishGroups.objects.filter(articles=article):
+                    Comments.objects.filter(article=article).delete()
+                    article.delete()
+                    
+                    return Response(json.dumps({
+                        "message": "article has successfully been deleted",
+                    }), status=status.HTTP_200_OK)
+
+                return Response(json.dumps({
+                    "message": "article belongs to a Published Group, you may not delete it",
+                }), status=status.HTTP_401_UNAUTHORIZED)
+            
+            else:
+                return Response(json.dumps({
+                    "message": "article with that slug does not exist",
+                    "data": json.dumps(request.data)
+                }), status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            return Response(json.dumps({
+                    "message": "article with that slug does not exist" if "Articles matching query does not exist" in str(e) else str(e),
+                    "data": json.dumps(request.data)
+                }), status=status.HTTP_400_BAD_REQUEST)
+            
 
 
 class UserArticleViewSet(ModelViewSet):
