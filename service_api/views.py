@@ -349,10 +349,13 @@ class CategoryViewSet(ModelViewSet):
         
         try:
             for category in category_objects:
+                
+                articles = []
 
                 article_of_category = Articles.objects.filter(category=category)
-
-                articles = [{'id':d.id, 'author': {'id':d.author.id, 'username':d.author.username, 'user_type': d.author.get_user_type_display()}, 'title':d.title, 'slug': d.slug, 'read_by': d.read_by, 'liked_by': d.liked_by} for d in article_of_category]
+                
+                if article_of_category:
+                    articles = [{'id':d.id, 'author': {'id':d.author.id, 'username':d.author.username, 'user_type': d.author.get_user_type_display()}, 'title':d.title, 'slug': d.slug, 'read_by': d.read_by, 'liked_by': d.liked_by} for d in article_of_category]
                 
                 one_category = {
                     'id': category.id,
@@ -500,10 +503,13 @@ class ArticleViewSet(ModelViewSet):
         
         try:
             for article in articles_objects:
+                
+                categories = []
 
                 category_of_article = article.category.all()
-
-                categories = [{'id':c.id, 'title':c.title, 'slug': c.slug} for c in category_of_article]
+                
+                if category_of_article :
+                    categories = [{'id':c.id, 'title':c.title, 'slug': c.slug} for c in category_of_article]
                 
                 one_article = {
                     'id': article.id,
@@ -565,6 +571,10 @@ class ArticleViewSet(ModelViewSet):
                         status=status.HTTP_200_OK,
                     )
             else:
+                
+                print()
+                print("*********************************** In List Articles Viewset ************************************ ")
+                
                 # articles_list = self.get_list_of_articles(self.queryset)
                 articles_list = self.get_list_of_articles(Articles.objects.all().order_by('-id'))
 
@@ -688,6 +698,7 @@ class ArticleViewSet(ModelViewSet):
             
 
 
+# ********************************* DONE ************************************************
 class CommentsViewSet(ModelViewSet):
     serializer_class = CommentSerializer
 
@@ -738,12 +749,12 @@ class CommentsViewSet(ModelViewSet):
             
             if article_slug:
             
-                print("\n")
-                print("******************************** Got in def list for Comment views set **************************")
-                print("article_slug : ", article_slug)
-                # print("article : ", Articles.objects.get(slug=article_slug))
-                print(Articles.objects.get(slug=article_slug))
-                print("\n")
+                # print("\n")
+                # print("******************************** Got in def list for Comment views set **************************")
+                # print("article_slug : ", article_slug)
+                # # print("article : ", Articles.objects.get(slug=article_slug))
+                # print(Articles.objects.get(slug=article_slug))
+                # print("\n")
                 
                 comments = Comments.objects.filter(article__slug=article_slug)
                 
@@ -796,3 +807,208 @@ class CommentsViewSet(ModelViewSet):
                 }), status=status.HTTP_400_BAD_REQUEST)
 
 
+# ********************************* DONE ************************************************
+# class PublishGroupsViewSet(ModelViewSet):
+#     serializer_class = PublishGroupsSerializer
+#     queryset = PublishGroups.objects.all().order_by('-id')
+
+#     lookup_field = "slug"
+
+#     def get_serializer(self, data):
+#         return self.serializer_class(data=data)
+    
+#     def perform_create(self, serializer):
+#         serializer.save()
+    
+#     def get_list_of_groups(self, groups_objects):
+#         groups_list = [] 
+        
+#         try:
+#             for group in groups_objects:
+
+#                 article_of_group = group.articles.all()
+
+#                 articles = [{'id':article.id, 'author': article.author.username, 'title':article.title, 'slug': article.slug} for article in article_of_group]
+                
+#                 one_article = {
+#                     'id': group.id,
+#                     'publisher': {'id':group.publisher.id, 'username':group.publisher.username, 'user_type': group.publisher.get_user_type_display() },
+#                     'title': group.title,
+#                     'slug': group.slug, 
+#                     'read_by': group.description, 
+#                     'photo': "" if not group.description else group.photo.url,
+#                     'created_at': group.created_at.timestamp(),
+#                     'modified_at': group.modified_at.timestamp()
+#                 }
+
+#                 articles_list.append(one_article)
+
+#             return articles_list
+#         except Exception as e:
+#             raise ValidationError(f'[ERR]: article error ==> {e}')
+
+        
+#     slug = openapi.Parameter('slug', in_=openapi.IN_QUERY, description='article\'s slug', type=openapi.TYPE_STRING)
+    
+#     user_id = openapi.Parameter('user_id', in_=openapi.IN_QUERY, description='user\'s id', type=openapi.TYPE_INTEGER)
+    
+
+#     @swagger_auto_schema(
+#         manual_parameters=[slug, user_id])
+
+#     def list(self, request, *args, **kwargs):
+#         slug = request.query_params.get('slug', None)
+#         user_id = request.query_params.get('user_id', None)
+        
+#         articles_list = []
+
+#         try:
+#             if user_id:
+                
+#                 article = Articles.objects.filter(author__id=user_id)
+#                 # if article.exists():
+#                 if article:
+                    
+#                     articles_list = self.get_list_of_articles(article)
+
+#                     return HttpResponse(
+#                         json.dumps(articles_list),
+#                         status=status.HTTP_200_OK,
+#                     )
+
+#             elif slug:
+                
+#                 article = Articles.objects.filter(slug=slug)
+#                 # if article.exists():
+#                 if article:
+                    
+#                     articles_list = self.get_list_of_articles(article)
+
+#                     return HttpResponse(
+#                         json.dumps(articles_list),
+#                         status=status.HTTP_200_OK,
+#                     )
+#             else:
+#                 # articles_list = self.get_list_of_articles(self.queryset)
+#                 articles_list = self.get_list_of_articles(Articles.objects.all().order_by('-id'))
+
+#             return HttpResponse(
+#                     json.dumps(articles_list),
+#                     status=status.HTTP_200_OK,
+#                 )
+#         except Exception as e:
+#             return Response(
+#                 f'article not found => [ERR]: {e}',
+#                 status=status.HTTP_400_BAD_REQUEST,
+#             )
+        
+
+#     @swagger_auto_schema(
+#         request_body=ArticleSerializer,
+#         responses = {
+#             '200' : 'HttpResponse status 201',
+#             '400': 'article has not been created',
+#         },
+#     )
+
+#     def create(self, request, *args, **kwargs):
+#         try:
+#             serializer = self.get_serializer(data=request.data)
+#             serializer.is_valid(raise_exception=True)
+#             self.perform_create(serializer)
+#             # headers = self.get_success_headers(serializer.data)
+#             # return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+#         except Exception as e:
+#             return Response(json.dumps({
+#                     # "message": 'category with this title already exists.' if 'unique' in str(e) else str(e),
+#                     "message": str(e),
+#                     "data": json.dumps(request.data)
+#                 }), status=status.HTTP_400_BAD_REQUEST)
+
+
+#     @swagger_auto_schema(
+#         request_body=ArticleSerializer,
+#         responses = {
+#             '200' : 'HttpResponse status 200',
+#             '400': 'article has not been updated',
+#         },
+#     )
+
+#     def update(self, request, slug, *args, **kwargs):
+
+#         try:
+            
+#             article = Articles.objects.get(slug=slug)
+
+#             if article:
+                
+#                 serializer = ArticleSerializer(article, data=request.data)
+#                 # serializer = self.get_serializer(data=request.data)
+#                 serializer.is_valid(raise_exception=True)
+
+#                 serializer.save()
+
+#                 # print("\n")
+#                 # print("******************** Serializer article Put Method *********************")
+#                 # print("\n")
+#                 # print(serializer.data)
+
+#                 return Response(serializer.data, status=status.HTTP_200_OK)
+            
+#             else:
+#                 return Response(json.dumps({
+#                     "message": "article with that slug does not exist",
+#                     "data": json.dumps(request.data)
+#                 }), status=status.HTTP_400_BAD_REQUEST)
+
+#         except Exception as e:
+#             return Response(json.dumps({
+#                     # "message": 'category with this title already exists.' if 'unique' in str(e) else str(e),
+#                     "message": str(e),
+#                     "data": json.dumps(request.data)
+#                 }), status=status.HTTP_400_BAD_REQUEST)
+
+
+#     @swagger_auto_schema(
+#         responses = {
+#             '200' : 'HttpResponse status 200',
+#             '400': 'article has not been deleted',
+#         },
+#     )
+    
+#     def delete(self, request, slug, *args, **kwargs):
+#         try:
+            
+#             article = Articles.objects.get(slug=slug)
+
+#             if article:
+                
+#                 if not PublishGroups.objects.filter(articles=article):
+#                     Comments.objects.filter(article=article).delete()
+#                     article.delete()
+                    
+#                     return Response(json.dumps({
+#                         "message": "article has successfully been deleted",
+#                     }), status=status.HTTP_200_OK)
+
+#                 return Response(json.dumps({
+#                     "message": "article belongs to a Published Group, you may not delete it",
+#                 }), status=status.HTTP_401_UNAUTHORIZED)
+            
+#             else:
+#                 return Response(json.dumps({
+#                     "message": "article with that slug does not exist",
+#                     "data": json.dumps(request.data)
+#                 }), status=status.HTTP_400_BAD_REQUEST)
+
+#         except Exception as e:
+#             return Response(json.dumps({
+#                     "message": "article with that slug does not exist" if "Articles matching query does not exist" in str(e) else str(e),
+#                     "data": json.dumps(request.data)
+#                 }), status=status.HTTP_400_BAD_REQUEST)
+        
+        
+        
