@@ -329,6 +329,7 @@ class SetNewPasswordAPIView(generics.GenericAPIView):
 
 # *******************************************************
 
+# ********************************************** DONE *********************************************************
 class CategoryViewSet(ModelViewSet):
     serializer_class = CategorySerializer
     # queryset = Category.objects.all().order_by('title')
@@ -392,9 +393,6 @@ class CategoryViewSet(ModelViewSet):
                         status=status.HTTP_200_OK,
                     )
             else:
-                # print("\n")
-                # print("*************************** Self Queryset Category ****************** ")
-                # print(self.queryset)
                 
                 category_list = self.get_list_of_category(self.queryset)
 
@@ -687,7 +685,7 @@ class CommentsViewSet(ModelViewSet):
 
     queryset = Comments.objects.all().order_by('-created_at')
 
-    lookup_field = "slug"
+    lookup_field = "id"
 
     def get_serializer(self, data):
         return self.serializer_class(data=data)
@@ -704,7 +702,7 @@ class CommentsViewSet(ModelViewSet):
                 one_comment = {
                     'id': comment.id,
                     'name': comment.name,
-                    'article': comment.article,
+                    'article': { 'id' : comment.article.id, 'title' : comment.article.title, 'slug' : comment.article.slug},
                     'content': comment.content,
                     'created_at': comment.created_at.timestamp(),
                     'modified_at': comment.modified_at.timestamp()
@@ -717,32 +715,53 @@ class CommentsViewSet(ModelViewSet):
             raise ValidationError(f'[ERR]: category error ==> {e}')
         
         
-    def list(self, request, article_slug, *args, **kwargs):
-    
+    article_slug = openapi.Parameter('article_slug', in_=openapi.IN_QUERY, description='article\'s slug to get comments from', type=openapi.TYPE_STRING)
+
+    @swagger_auto_schema(
+        manual_parameters=[article_slug])
+
+    # def list(self, request, article_slug, *args, **kwargs):
+    def list(self, request, *args, **kwargs):
+        article_slug = request.query_params.get('article_slug', None)
+        
+        comment_list = []
+        
         try:
             
-            print("\n")
-            print("******************************** Got in def list for Comment views set **************************")
-            print("article_slug : ", article_slug)
-            print("article : ", Articles.objects.get(slug=article_slug))
-            print("\n")
+            if article_slug:
             
-            comments = Comments.objects.filter(article__slug=article_slug)
-
-            if comments:
+                print("\n")
+                print("******************************** Got in def list for Comment views set **************************")
+                print("article_slug : ", article_slug)
+                # print("article : ", Articles.objects.get(slug=article_slug))
+                print(Articles.objects.get(slug=article_slug))
+                print("\n")
                 
-                comment_list = self.get_list_of_category(comments)
+                comments = Comments.objects.filter(article__slug=article_slug)
 
-                return HttpResponse(
+                if comments:
+                    
+                    comment_list = self.get_list_of_category(comments)
+
+                    return HttpResponse(
+                        json.dumps(comment_list),
+                        status=status.HTTP_200_OK,
+                    )
+                                
+                else:
+                    return Response(json.dumps({
+                        "message": "Comments with that article slug do not exist",
+                        "data": json.dumps(request.data)
+                    }), status=status.HTTP_400_BAD_REQUEST)
+            
+            else:
+                
+                comment_list = self.get_list_of_comment(self.queryset)
+
+            return HttpResponse(
                     json.dumps(comment_list),
                     status=status.HTTP_200_OK,
                 )
-                            
-            else:
-                return Response(json.dumps({
-                    "message": "Comments with that article slug do not exist",
-                    "data": json.dumps(request.data)
-                }), status=status.HTTP_400_BAD_REQUEST)
 
         except Exception as e:
             return Response(json.dumps({
