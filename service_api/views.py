@@ -333,8 +333,8 @@ class SetNewPasswordAPIView(generics.GenericAPIView):
 # ********************************************** DONE *********************************************************
 class CategoryViewSet(ModelViewSet):
     serializer_class = CategorySerializer
-    # queryset = Category.objects.all().order_by('-created_at')
-    get_queryset = Category.objects.all().order_by('-created_at')
+    queryset = Category.objects.all().order_by('-created_at')
+    # get_queryset = Category.objects.all().order_by('-created_at')
 
     lookup_field = "slug"
 
@@ -395,17 +395,10 @@ class CategoryViewSet(ModelViewSet):
                     )
             else:
                 
-                # print("\n")
-                # print("*************************** Queryset issue ***********************")
-                # print("\n")
-                # print(self.get_queryset)
-                
-                # sleep(9)
-                
-                # works but is cached, .. => to change 
+                # works but is cached,so only sending old list / queryset .. => to change 
                 # category_list = self.get_list_of_category(self.queryset) 
                 
-                # return methods which is not iterable
+                # return methods which is not iterable, look into it, harder
                 # category_list = self.get_list_of_category(self.get_queryset)  
                 
                 category_list = self.get_list_of_category(Category.objects.all().order_by('-created_at'))
@@ -573,6 +566,7 @@ class ArticleViewSet(ModelViewSet):
                     )
             else:
                 articles_list = self.get_list_of_articles(self.queryset)
+                # articles_list = self.get_list_of_articles(Articles.objects.all().order_by('-id'))
 
             return HttpResponse(
                     json.dumps(articles_list),
