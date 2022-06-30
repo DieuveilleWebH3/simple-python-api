@@ -72,6 +72,10 @@ urlpatterns = [
     
     # path('articles/<user_id>', ArticleViewSet.as_view({'get': 'user_articles'}), name='articles'),
     
+    # 
+    path('comments/', CommentsViewSet.as_view({'get': 'list', 'post':'create'}), name="comments"), 
+    path('comments/<article_slug>', CommentsViewSet.as_view({'get': 'list'}), name='comments'),
+    
     
 ]
 
