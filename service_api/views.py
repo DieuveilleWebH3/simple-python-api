@@ -574,10 +574,7 @@ class ArticleViewSet(ModelViewSet):
                         status=status.HTTP_200_OK,
                     )
             else:
-                
-                print()
-                print("*********************************** In List Articles Viewset ************************************ ")
-                
+
                 # articles_list = self.get_list_of_articles(self.queryset)
                 articles_list = self.get_list_of_articles(Articles.objects.all().order_by('-id'))
 
@@ -830,6 +827,38 @@ class CommentsViewSet(ModelViewSet):
     def create(self, request, *args, **kwargs):
         try:
             serializer = self.get_serializer(data=request.data)
+            
+            if "article" not in request.data:
+                return Response(json.dumps({
+                    # "message": 'category with this title already exists.' if 'unique' in str(e) else str(e),
+                    "message": "You must provide an article id !",
+                    "data": json.dumps(request.data)
+                }), status=status.HTTP_400_BAD_REQUEST)
+            
+            if not re.match(r'^([\s\d]+)$', str(request.data["article"]) ):
+                return Response(json.dumps({
+                    # "message": 'category with this title already exists.' if 'unique' in str(e) else str(e),
+                    "message": "The article's id must be a digit !",
+                    "data": json.dumps(request.data)
+                }), status=status.HTTP_400_BAD_REQUEST)
+                
+            try:
+                the_article = Articles.objects.get(id=int(request.data["article"]))
+                
+                if not the_article:
+                    return Response(json.dumps({
+                        "message": "The article's id must be a digit !",
+                        "data": json.dumps(request.data)
+                    }), status=status.HTTP_400_BAD_REQUEST)
+                    
+            except Exception as e:
+                return Response(json.dumps({
+                        # "message": 'category with this title already exists.' if 'unique' in str(e) else str(e),
+                        "message": str(e),
+                        "data": json.dumps(request.data)
+                    }), status=status.HTTP_400_BAD_REQUEST)
+                    
+            
             serializer.is_valid(raise_exception=True)
             self.perform_create(serializer)
 
@@ -1031,4 +1060,53 @@ class PublishGroupsViewSet(ModelViewSet):
                 }), status=status.HTTP_400_BAD_REQUEST)
         
         
+# ********************************* DONE ************************************************
+class UserViewSet(ModelViewSet):
+    serializer_class = UserSerializer
+
+    lookup_field = "id"
+
+    def get_serializer(self, data):
+        return self.serializer_class(data=data)
+    
+    def perform_create(self, serializer):
+        serializer.save()
+        
+
+    @swagger_auto_schema(
+        request_body=UserSerializer,
+        responses = {
+            '200' : 'HttpResponse status 200',
+            '400': 'User has not been updated',
+        },
+    )
+
+    def update(self, request, user_id, *args, **kwargs):
+
+        try:
+            
+            user = User.objects.get(id=user_id)
+
+            if user:
+                
+                serializer = UserSerializer(user, data=request.data)
+                # serializer = self.get_serializer(data=request.data)
+                serializer.is_valid(raise_exception=True)
+
+                serializer.save()
+
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            
+            else:
+                return Response(json.dumps({
+                    "message": "User with that id does not exist",
+                    "data": json.dumps(request.data)
+                }), status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            return Response(json.dumps({
+                    "message": str(e),
+                    "data": json.dumps(request.data)
+                }), status=status.HTTP_400_BAD_REQUEST)
+
         

@@ -83,6 +83,10 @@ urlpatterns = [
     path('groups/<slug>', PublishGroupsViewSet.as_view({'put': 'update', 'delete':'delete'}), name='groups'),
     
     
+    #
+    path('users/<user_id>', UserViewSet.as_view({'put': 'update'}), name='users'),
+    
+    
 ]
 
 
