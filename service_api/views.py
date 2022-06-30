@@ -1,4 +1,3 @@
-from ast import Delete
 from time import sleep
 from django.shortcuts import render, redirect, get_object_or_404, reverse
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponsePermanentRedirect
@@ -7,6 +6,7 @@ from django.forms import ValidationError
 from django.forms.models import model_to_dict
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
+import re
 
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
@@ -427,6 +427,21 @@ class CategoryViewSet(ModelViewSet):
     def create(self, request, *args, **kwargs):
         try:
             serializer = self.get_serializer(data=request.data)
+            
+            if "author" not in request.data:
+                return Response(json.dumps({
+                    # "message": 'category with this title already exists.' if 'unique' in str(e) else str(e),
+                    "message": "You must provide an author id !",
+                    "data": json.dumps(request.data)
+                }), status=status.HTTP_400_BAD_REQUEST)
+            
+            if not re.match(r'^([\s\d]+)$', str(request.data["author"]) ):
+                return Response(json.dumps({
+                    # "message": 'category with this title already exists.' if 'unique' in str(e) else str(e),
+                    "message": "The author's id must be a digit !",
+                    "data": json.dumps(request.data)
+                }), status=status.HTTP_400_BAD_REQUEST)
+            
             serializer.is_valid(raise_exception=True)
             self.perform_create(serializer)
             # headers = self.get_success_headers(serializer.data)
