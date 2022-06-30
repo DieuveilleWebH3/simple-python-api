@@ -565,8 +565,8 @@ class ArticleViewSet(ModelViewSet):
                         status=status.HTTP_200_OK,
                     )
             else:
-                articles_list = self.get_list_of_articles(self.queryset)
-                # articles_list = self.get_list_of_articles(Articles.objects.all().order_by('-id'))
+                # articles_list = self.get_list_of_articles(self.queryset)
+                articles_list = self.get_list_of_articles(Articles.objects.all().order_by('-id'))
 
             return HttpResponse(
                     json.dumps(articles_list),
