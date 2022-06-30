@@ -156,7 +156,7 @@ class LoginAPIView(generics.GenericAPIView):
                 response["user_type"] = user.get_user_type_display()
                 
                 if user.photo:
-                    photo = user.photo.url
+                    photo = "http://127.0.0.1:8022"+user.photo.url
                     
                 response["photo"] = photo
 
@@ -502,6 +502,7 @@ class ArticleViewSet(ModelViewSet):
         articles_list = [] 
         
         try:
+            
             for article in articles_objects:
                 
                 categories = []
@@ -517,7 +518,7 @@ class ArticleViewSet(ModelViewSet):
                     'title': article.title,
                     'slug': article.slug, 
                     "content": article.content,
-                    'photo': "" if not article.photo else article.photo.url,
+                    'photo': "" if not article.photo else "http://127.0.0.1:8022"+article.photo.url,
                     'read_by': article.read_by, 
                     'liked_by': article.liked_by,
                     'categories': categories,
@@ -842,205 +843,192 @@ class CommentsViewSet(ModelViewSet):
 
 
 # ********************************* DONE ************************************************
-# class PublishGroupsViewSet(ModelViewSet):
-#     serializer_class = PublishGroupsSerializer
-#     queryset = PublishGroups.objects.all().order_by('-id')
+class PublishGroupsViewSet(ModelViewSet):
+    serializer_class = PublishGroupsSerializer
+    queryset = PublishGroups.objects.all().order_by('-id')
 
-#     lookup_field = "slug"
+    lookup_field = "slug"
 
-#     def get_serializer(self, data):
-#         return self.serializer_class(data=data)
+    def get_serializer(self, data):
+        return self.serializer_class(data=data)
     
-#     def perform_create(self, serializer):
-#         serializer.save()
+    def perform_create(self, serializer):
+        serializer.save()
     
-#     def get_list_of_groups(self, groups_objects):
-#         groups_list = [] 
+    def get_list_of_groups(self, groups_objects):
+        groups_list = [] 
         
-#         try:
-#             for group in groups_objects:
+        try:
+            for group in groups_objects:
                 
-#                 articles = []
+                articles = []
 
-#                 article_of_group = group.articles.all()
+                article_of_group = group.articles.all()
 
-#                 if article_of_group:
-#                     articles = [{'id':article.id, 'author': article.author.username, 'title':article.title, 'slug': article.slug} for article in article_of_group]
+                if article_of_group:
+                    articles = [{'id':article.id, 'author': article.author.username, 'title':article.title, 'slug': article.slug} for article in article_of_group]
                 
-#                 one_group = {
-#                     'id': group.id,
-#                     'publisher': {'id':group.publisher.id, 'username':group.publisher.username, 'user_type': group.publisher.get_user_type_display() },
-#                     'title': group.title,
-#                     'slug': group.slug, 
-#                     'description': group.description,
-#                     'articles': articles,
-#                     'photo': "" if not group.photo else group.photo.url,
-#                     'created_at': group.created_at.timestamp(),
-#                     'modified_at': group.modified_at.timestamp()
-#                 }
+                one_group = {
+                    'id': group.id,
+                    'publisher': {'id':group.publisher.id, 'username':group.publisher.username, 'user_type': group.publisher.get_user_type_display() },
+                    'title': group.title,
+                    'slug': group.slug, 
+                    'description': group.description,
+                    'articles': articles,
+                    'photo': "" if not group.photo else "http://127.0.0.1:8022"+group.photo.url,
+                    'created_at': group.created_at.timestamp(),
+                    'modified_at': group.modified_at.timestamp()
+                }
 
-#                 groups_list.append(one_group)
+                groups_list.append(one_group)
 
-#             return groups_list
-#         except Exception as e:
-#             raise ValidationError(f'[ERR]: Publish Group error ==> {e}')
+            return groups_list
+        except Exception as e:
+            raise ValidationError(f'[ERR]: Publish Group error ==> {e}')
 
         
-#     slug = openapi.Parameter('slug', in_=openapi.IN_QUERY, description='Publish Group\'s slug', type=openapi.TYPE_STRING)
+    slug = openapi.Parameter('slug', in_=openapi.IN_QUERY, description='Publish Group\'s slug', type=openapi.TYPE_STRING)
     
-#     user_id = openapi.Parameter('user_id', in_=openapi.IN_QUERY, description='Publisher\'s id', type=openapi.TYPE_INTEGER)
+    user_id = openapi.Parameter('user_id', in_=openapi.IN_QUERY, description='Publisher\'s id', type=openapi.TYPE_INTEGER)
     
 
-#     @swagger_auto_schema(
-#         manual_parameters=[slug, user_id])
+    @swagger_auto_schema(
+        manual_parameters=[slug, user_id])
 
-#     def list(self, request, *args, **kwargs):
-#         slug = request.query_params.get('slug', None)
-#         user_id = request.query_params.get('user_id', None)
+    def list(self, request, *args, **kwargs):
+        slug = request.query_params.get('slug', None)
+        user_id = request.query_params.get('user_id', None)
         
-#         groups_list = []
+        groups_list = []
 
-#         try:
-#             if user_id:
+        try:
+            if user_id:
                 
-#                 group = PublishGroups.objects.filter(publisher__id=user_id)
-#                 # if article.exists():
-#                 if group:
+                group = PublishGroups.objects.filter(publisher__id=user_id)
+                # if article.exists():
+                if group:
                     
-#                     groups_list = self.get_list_of_articles(group)
+                    groups_list = self.get_list_of_groups(group)
 
-#                     return HttpResponse(
-#                         json.dumps(groups_list),
-#                         status=status.HTTP_200_OK,
-#                     )
+                    # return HttpResponse(
+                    #     json.dumps(groups_list),
+                    #     status=status.HTTP_200_OK,
+                    # )
 
-#             elif slug:
+            elif slug:
                 
-#                 group = PublishGroups.objects.filter(slug=slug)
-#                 # if article.exists():
-#                 if group:
+                group = PublishGroups.objects.filter(slug=slug)
+                # if article.exists():
+                if group:
                     
-#                     groups_list = self.get_list_of_articles(group)
-#             else:
-#                 groups_list = self.get_list_of_groups(PublishGroups.objects.all().order_by('-id'))
+                    groups_list = self.get_list_of_groups(group)
+            else:
+                groups_list = self.get_list_of_groups(PublishGroups.objects.all().order_by('-id'))
 
-#             return HttpResponse(
-#                     json.dumps(groups_list),
-#                     status=status.HTTP_200_OK,
-#                 )
-#         except Exception as e:
-#             return Response(
-#                 f'article not found => [ERR]: {e}',
-#                 status=status.HTTP_400_BAD_REQUEST,
-#             )
+            return HttpResponse(
+                    json.dumps(groups_list),
+                    status=status.HTTP_200_OK,
+                )
+        except Exception as e:
+            return Response(
+                f'Publish group not found => [ERR]: {e}',
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         
 
-#     @swagger_auto_schema(
-#         request_body=ArticleSerializer,
-#         responses = {
-#             '200' : 'HttpResponse status 201',
-#             '400': 'article has not been created',
-#         },
-#     )
+    @swagger_auto_schema(
+        request_body=PublishGroupsSerializer,
+        responses = {
+            '200' : 'HttpResponse status 201',
+            '400': 'Publish group has not been created',
+        },
+    )
 
-#     def create(self, request, *args, **kwargs):
-#         try:
-#             serializer = self.get_serializer(data=request.data)
-#             serializer.is_valid(raise_exception=True)
-#             self.perform_create(serializer)
-#             # headers = self.get_success_headers(serializer.data)
-#             # return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+    def create(self, request, *args, **kwargs):
+        try:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            # headers = self.get_success_headers(serializer.data)
+            # return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-#         except Exception as e:
-#             return Response(json.dumps({
-#                     # "message": 'category with this title already exists.' if 'unique' in str(e) else str(e),
-#                     "message": str(e),
-#                     "data": json.dumps(request.data)
-#                 }), status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response(json.dumps({
+                    # "message": 'category with this title already exists.' if 'unique' in str(e) else str(e),
+                    "message": str(e),
+                    "data": json.dumps(request.data)
+                }), status=status.HTTP_400_BAD_REQUEST)
 
 
-#     @swagger_auto_schema(
-#         request_body=ArticleSerializer,
-#         responses = {
-#             '200' : 'HttpResponse status 200',
-#             '400': 'article has not been updated',
-#         },
-#     )
+    @swagger_auto_schema(
+        request_body=ArticleSerializer,
+        responses = {
+            '200' : 'HttpResponse status 200',
+            '400': 'Published group has not been updated',
+        },
+    )
 
-#     def update(self, request, slug, *args, **kwargs):
+    def update(self, request, slug, *args, **kwargs):
 
-#         try:
+        try:
             
-#             article = Articles.objects.get(slug=slug)
+            group = PublishGroups.objects.get(slug=slug)
 
-#             if article:
+            if group:
                 
-#                 serializer = ArticleSerializer(article, data=request.data)
-#                 # serializer = self.get_serializer(data=request.data)
-#                 serializer.is_valid(raise_exception=True)
+                serializer = PublishGroupsSerializer(group, data=request.data)
+                # serializer = self.get_serializer(data=request.data)
+                serializer.is_valid(raise_exception=True)
 
-#                 serializer.save()
+                serializer.save()
 
-#                 # print("\n")
-#                 # print("******************** Serializer article Put Method *********************")
-#                 # print("\n")
-#                 # print(serializer.data)
-
-#                 return Response(serializer.data, status=status.HTTP_200_OK)
+                return Response(serializer.data, status=status.HTTP_200_OK)
             
-#             else:
-#                 return Response(json.dumps({
-#                     "message": "article with that slug does not exist",
-#                     "data": json.dumps(request.data)
-#                 }), status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response(json.dumps({
+                    "message": "Publish group with that slug does not exist",
+                    "data": json.dumps(request.data)
+                }), status=status.HTTP_400_BAD_REQUEST)
 
-#         except Exception as e:
-#             return Response(json.dumps({
-#                     # "message": 'category with this title already exists.' if 'unique' in str(e) else str(e),
-#                     "message": str(e),
-#                     "data": json.dumps(request.data)
-#                 }), status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response(json.dumps({
+                    # "message": 'category with this title already exists.' if 'unique' in str(e) else str(e),
+                    "message": str(e),
+                    "data": json.dumps(request.data)
+                }), status=status.HTTP_400_BAD_REQUEST)
 
 
-#     @swagger_auto_schema(
-#         responses = {
-#             '200' : 'HttpResponse status 200',
-#             '400': 'article has not been deleted',
-#         },
-#     )
+    @swagger_auto_schema(
+        responses = {
+            '200' : 'HttpResponse status 200',
+            '400': 'Publish group has not been deleted',
+        },
+    )
     
-#     def delete(self, request, slug, *args, **kwargs):
-#         try:
+    def delete(self, request, slug, *args, **kwargs):
+        try:
             
-#             article = Articles.objects.get(slug=slug)
+            group = PublishGroups.objects.get(slug=slug)
 
-#             if article:
-                
-#                 if not PublishGroups.objects.filter(articles=article):
-#                     Comments.objects.filter(article=article).delete()
-#                     article.delete()
+            if group:
+                group.delete()
                     
-#                     return Response(json.dumps({
-#                         "message": "article has successfully been deleted",
-#                     }), status=status.HTTP_200_OK)
+                return Response(json.dumps({
+                    "message": "Publish group has successfully been deleted",
+                }), status=status.HTTP_200_OK)
+            else:
+                return Response(json.dumps({
+                    "message": "Publish group with that slug does not exist",
+                    "data": json.dumps(request.data)
+                }), status=status.HTTP_400_BAD_REQUEST)
 
-#                 return Response(json.dumps({
-#                     "message": "article belongs to a Published Group, you may not delete it",
-#                 }), status=status.HTTP_401_UNAUTHORIZED)
-            
-#             else:
-#                 return Response(json.dumps({
-#                     "message": "article with that slug does not exist",
-#                     "data": json.dumps(request.data)
-#                 }), status=status.HTTP_400_BAD_REQUEST)
-
-#         except Exception as e:
-#             return Response(json.dumps({
-#                     "message": "article with that slug does not exist" if "Articles matching query does not exist" in str(e) else str(e),
-#                     "data": json.dumps(request.data)
-#                 }), status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response(json.dumps({
+                    "message": "Publish Group with that slug does not exist" if "matching query does not exist" in str(e) else str(e),
+                    "data": json.dumps(request.data)
+                }), status=status.HTTP_400_BAD_REQUEST)
         
         
         

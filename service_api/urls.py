@@ -72,9 +72,15 @@ urlpatterns = [
     
     # path('articles/<user_id>', ArticleViewSet.as_view({'get': 'user_articles'}), name='articles'),
     
+    
     # 
     path('comments/', CommentsViewSet.as_view({'get': 'list', 'post':'create'}), name="comments"), 
     # path('comments/<article_slug>', CommentsViewSet.as_view({'get': 'list'}), name='comments'),
+    
+    
+    # 
+    path('groups/', PublishGroupsViewSet.as_view({'get': 'list', 'post':'create'}), name="groups"), 
+    path('groups/<slug>', PublishGroupsViewSet.as_view({'put': 'update', 'delete':'delete'}), name='groups'),
     
     
 ]
