@@ -150,7 +150,7 @@ class SetNewPasswordSerializer(serializers.Serializer):
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ["id", "title", "slug", "created_at", "modified_at"]
+        fields = ["id", "title", "slug", "description", "created_at", "modified_at"]
             
             
 class ArticleSerializer(serializers.ModelSerializer):
@@ -163,6 +163,12 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comments
         fields = ["id", "name", "article", "content", "created_at", "modified_at"]
+
+
+class PublishGroupsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PublishGroups
+        fields = ["id", "publisher", "articles", "description", "created_at", "modified_at"]
 
 
 
