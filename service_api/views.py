@@ -427,21 +427,6 @@ class CategoryViewSet(ModelViewSet):
     def create(self, request, *args, **kwargs):
         try:
             serializer = self.get_serializer(data=request.data)
-            
-            if "author" not in request.data:
-                return Response(json.dumps({
-                    # "message": 'category with this title already exists.' if 'unique' in str(e) else str(e),
-                    "message": "You must provide an author id !",
-                    "data": json.dumps(request.data)
-                }), status=status.HTTP_400_BAD_REQUEST)
-            
-            if not re.match(r'^([\s\d]+)$', str(request.data["author"]) ):
-                return Response(json.dumps({
-                    # "message": 'category with this title already exists.' if 'unique' in str(e) else str(e),
-                    "message": "The author's id must be a digit !",
-                    "data": json.dumps(request.data)
-                }), status=status.HTTP_400_BAD_REQUEST)
-            
             serializer.is_valid(raise_exception=True)
             self.perform_create(serializer)
             # headers = self.get_success_headers(serializer.data)
@@ -531,6 +516,8 @@ class ArticleViewSet(ModelViewSet):
                     'author': {'id':article.author.id, 'username':article.author.username, 'user_type': article.author.get_user_type_display() },
                     'title': article.title,
                     'slug': article.slug, 
+                    "content": article.content,
+                    'photo': "" if not article.photo else article.photo.url,
                     'read_by': article.read_by, 
                     'liked_by': article.liked_by,
                     'categories': categories,
@@ -615,6 +602,38 @@ class ArticleViewSet(ModelViewSet):
     def create(self, request, *args, **kwargs):
         try:
             serializer = self.get_serializer(data=request.data)
+            
+            if "author" not in request.data:
+                return Response(json.dumps({
+                    # "message": 'category with this title already exists.' if 'unique' in str(e) else str(e),
+                    "message": "You must provide an author id !",
+                    "data": json.dumps(request.data)
+                }), status=status.HTTP_400_BAD_REQUEST)
+            
+            if not re.match(r'^([\s\d]+)$', str(request.data["author"]) ):
+                return Response(json.dumps({
+                    # "message": 'category with this title already exists.' if 'unique' in str(e) else str(e),
+                    "message": "The author's id must be a digit !",
+                    "data": json.dumps(request.data)
+                }), status=status.HTTP_400_BAD_REQUEST)
+                
+            try:
+                the_author = User.objects.get(id=int(request.data["author"]))
+                
+                if not the_author:
+                    return Response(json.dumps({
+                        "message": "The author's id must be a digit !",
+                        "data": json.dumps(request.data)
+                    }), status=status.HTTP_400_BAD_REQUEST)
+                    
+            except Exception as e:
+                return Response(json.dumps({
+                        # "message": 'category with this title already exists.' if 'unique' in str(e) else str(e),
+                        "message": str(e),
+                        "data": json.dumps(request.data)
+                    }), status=status.HTTP_400_BAD_REQUEST)
+                    
+            
             serializer.is_valid(raise_exception=True)
             self.perform_create(serializer)
             # headers = self.get_success_headers(serializer.data)
