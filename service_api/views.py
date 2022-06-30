@@ -1031,4 +1031,53 @@ class PublishGroupsViewSet(ModelViewSet):
                 }), status=status.HTTP_400_BAD_REQUEST)
         
         
+# ********************************* DONE ************************************************
+class UserViewSet(ModelViewSet):
+    serializer_class = UserSerializer
+
+    lookup_field = "id"
+
+    def get_serializer(self, data):
+        return self.serializer_class(data=data)
+    
+    def perform_create(self, serializer):
+        serializer.save()
+        
+
+    @swagger_auto_schema(
+        request_body=UserSerializer,
+        responses = {
+            '200' : 'HttpResponse status 200',
+            '400': 'User has not been updated',
+        },
+    )
+
+    def update(self, request, user_id, *args, **kwargs):
+
+        try:
+            
+            user = User.objects.get(id=user_id)
+
+            if user:
+                
+                serializer = UserSerializer(user, data=request.data)
+                # serializer = self.get_serializer(data=request.data)
+                serializer.is_valid(raise_exception=True)
+
+                serializer.save()
+
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            
+            else:
+                return Response(json.dumps({
+                    "message": "User with that id does not exist",
+                    "data": json.dumps(request.data)
+                }), status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            return Response(json.dumps({
+                    "message": str(e),
+                    "data": json.dumps(request.data)
+                }), status=status.HTTP_400_BAD_REQUEST)
+
         
