@@ -67,7 +67,7 @@ class PublishGroups(models.Model):
     title = models.CharField(max_length=255, unique=True, blank=False, null=False)
     slug = models.CharField(max_length=255, unique=True)
     
-    desciption = models.TextField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
     
     photo = models.ImageField(upload_to="group_photos", null=True, blank=True)
 
