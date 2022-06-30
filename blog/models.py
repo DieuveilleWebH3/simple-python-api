@@ -75,7 +75,7 @@ class PublishGroups(models.Model):
     modified_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
-        return f'{str(self.slug)} - {str(self.publisher.username)}'
+        return f'{str(self.slug)} - {str(self.publisher.username)} - {str(self.description)}'
 
 
 # Model Comments  

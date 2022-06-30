@@ -1,3 +1,4 @@
+from ast import Delete
 from django.shortcuts import render, redirect, get_object_or_404, reverse
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponsePermanentRedirect
 # from django.contrib.auth.models import User
@@ -328,6 +329,7 @@ class SetNewPasswordAPIView(generics.GenericAPIView):
 
 # *******************************************************
 
+# ********************************************** DONE *********************************************************
 class CategoryViewSet(ModelViewSet):
     serializer_class = CategorySerializer
     # queryset = Category.objects.all().order_by('title')
@@ -391,9 +393,6 @@ class CategoryViewSet(ModelViewSet):
                         status=status.HTTP_200_OK,
                     )
             else:
-                # print("\n")
-                # print("*************************** Self Queryset Category ****************** ")
-                # print(self.queryset)
                 
                 category_list = self.get_list_of_category(self.queryset)
 
@@ -476,6 +475,7 @@ class CategoryViewSet(ModelViewSet):
                 }), status=status.HTTP_400_BAD_REQUEST)
 
 
+# ********************************* DONE ************************************************
 class ArticleViewSet(ModelViewSet):
     serializer_class = ArticleSerializer
     queryset = Articles.objects.all().order_by('-id')
@@ -518,19 +518,23 @@ class ArticleViewSet(ModelViewSet):
 
         
     slug = openapi.Parameter('slug', in_=openapi.IN_QUERY, description='article\'s slug', type=openapi.TYPE_STRING)
+    
+    user_id = openapi.Parameter('user_id', in_=openapi.IN_QUERY, description='user\'s id', type=openapi.TYPE_INTEGER)
+    
 
     @swagger_auto_schema(
-        manual_parameters=[slug])
+        manual_parameters=[slug, user_id])
 
     def list(self, request, *args, **kwargs):
         slug = request.query_params.get('slug', None)
+        user_id = request.query_params.get('user_id', None)
+        
         articles_list = []
 
         try:
-
-            if slug:
+            if user_id:
                 
-                article = Articles.objects.filter(slug=slug)
+                article = Articles.objects.filter(author__id=user_id)
                 # if article.exists():
                 if article:
                     
@@ -540,42 +544,10 @@ class ArticleViewSet(ModelViewSet):
                         json.dumps(articles_list),
                         status=status.HTTP_200_OK,
                     )
-            else:
-                articles_list = self.get_list_of_articles(self.queryset)
 
-            return HttpResponse(
-                    json.dumps(articles_list),
-                    status=status.HTTP_200_OK,
-                )
-        except Exception as e:
-            return Response(
-                f'article not found => [ERR]: {e}',
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-
-    user_id = openapi.Parameter('user_id', in_=openapi.IN_QUERY, description='user\'s id', type=openapi.TYPE_INTEGER)
-
-    @swagger_auto_schema(
-        manual_parameters=[user_id])
-    
-    def user_articles(self, request, *args, **kwargs):
-        print("\n")
-        print("*************************** In function user_articles ***************************")
-        print("\n")
-        
-        user_id = request.query_params.get('user_id', None)
-        articles_list = []
-
-        try:
-
-            if user_id:
+            elif slug:
                 
-                print("\n")
-                print("*************************** printing user id ***************************")
-                print(user_id)
-                
-                article = Articles.objects.filter(author__id=user_id)
+                article = Articles.objects.filter(slug=slug)
                 # if article.exists():
                 if article:
                     
@@ -668,11 +640,51 @@ class ArticleViewSet(ModelViewSet):
                 }), status=status.HTTP_400_BAD_REQUEST)
 
 
-class UserArticleViewSet(ModelViewSet):
-    serializer_class = ArticleSerializer
-    queryset = Articles.objects.all().order_by('-id')
+    @swagger_auto_schema(
+        responses = {
+            '200' : 'HttpResponse status 200',
+            '400': 'article has not been deleted',
+        },
+    )
+    
+    def delete(self, request, slug, *args, **kwargs):
+        try:
+            
+            article = Articles.objects.get(slug=slug)
 
-    # lookup_field = "slug"
+            if article:
+                
+                if not PublishGroups.objects.filter(articles=article):
+                    Comments.objects.filter(article=article).delete()
+                    article.delete()
+                    
+                    return Response(json.dumps({
+                        "message": "article has successfully been deleted",
+                    }), status=status.HTTP_200_OK)
+
+                return Response(json.dumps({
+                    "message": "article belongs to a Published Group, you may not delete it",
+                }), status=status.HTTP_401_UNAUTHORIZED)
+            
+            else:
+                return Response(json.dumps({
+                    "message": "article with that slug does not exist",
+                    "data": json.dumps(request.data)
+                }), status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            return Response(json.dumps({
+                    "message": "article with that slug does not exist" if "Articles matching query does not exist" in str(e) else str(e),
+                    "data": json.dumps(request.data)
+                }), status=status.HTTP_400_BAD_REQUEST)
+            
+
+
+class CommentsViewSet(ModelViewSet):
+    serializer_class = CommentSerializer
+
+    queryset = Comments.objects.all().order_by('-created_at')
+
     lookup_field = "id"
 
     def get_serializer(self, data):
@@ -681,72 +693,97 @@ class UserArticleViewSet(ModelViewSet):
     def perform_create(self, serializer):
         serializer.save()
     
-    def get_list_of_articles(self, articles_objects):
-        articles_list = [] 
+    def get_list_of_comment(self, comment_objects):
+        comment_list = [] 
         
         try:
-            for article in articles_objects:
-
-                category_of_article = article.category.all()
-
-                categories = [{'id':c.id, 'title':c.title, 'slug': c.slug} for c in category_of_article]
+            for comment in comment_objects:
                 
-                one_article = {
-                    'id': article.id,
-                    'title': article.title,
-                    'slug': article.slug, 
-                    'read_by': article.read_by, 
-                    'liked_by': article.liked_by,
-                    'categories': categories,
-                    'created_at': article.created_at.timestamp(),
-                    'modified_at': article.modified_at.timestamp()
+                one_comment = {
+                    'id': comment.id,
+                    'name': comment.name,
+                    'article': { 'id' : comment.article.id, 'title' : comment.article.title, 'slug' : comment.article.slug},
+                    'content': comment.content,
+                    'created_at': comment.created_at.timestamp(),
+                    'modified_at': comment.modified_at.timestamp()
                 }
 
-                articles_list.append(one_article)
+                comment_list.append(one_comment)
 
-            return articles_list
+            return comment_list
         except Exception as e:
-            raise ValidationError(f'[ERR]: article error ==> {e}')
-
-    # user_id = openapi.Parameter('user_id', in_=openapi.IN_QUERY, description='user\'s id', type=openapi.TYPE_INTEGER)
-    user_id = openapi.Parameter('user_id', in_=openapi.IN_QUERY, description='user\'s id', type=openapi.TYPE_STRING)
+            raise ValidationError(f'[ERR]: category error ==> {e}')
+        
+        
+    article_slug = openapi.Parameter('article_slug', in_=openapi.IN_QUERY, description='article\'s slug to get comments from', type=openapi.TYPE_STRING)
 
     @swagger_auto_schema(
-        manual_parameters=[user_id])
-    
+        manual_parameters=[article_slug])
+
+    # def list(self, request, article_slug, *args, **kwargs):
     def list(self, request, *args, **kwargs):
-        user_id = request.query_params.get('user_id', None)
-        articles_list = []
-
+        article_slug = request.query_params.get('article_slug', None)
+        
+        comment_list = []
+        
         try:
-
-            if user_id:
+            
+            if article_slug:
+            
+                print("\n")
+                print("******************************** Got in def list for Comment views set **************************")
+                print("article_slug : ", article_slug)
+                # print("article : ", Articles.objects.get(slug=article_slug))
+                print(Articles.objects.get(slug=article_slug))
+                print("\n")
                 
-                article = Articles.objects.filter(author__id=int(user_id))
-                # if article.exists():
-                if article:
-                    
-                    articles_list = self.get_list_of_articles(article)
+                comments = Comments.objects.filter(article__slug=article_slug)
+                
+                if not comments:
+                    return Response(json.dumps({
+                        "message": "No Comments because Article with that slug do not exist",
+                        "data": json.dumps(request.data)
+                    }), status=status.HTTP_400_BAD_REQUEST)
 
-                    return HttpResponse(
-                        json.dumps(articles_list),
-                        status=status.HTTP_200_OK,
-                    )
+                comment_list = self.get_list_of_comment(comments)
+            
             else:
-                return Response(
-                    f'this user has no articles => [ERR]: {e}',
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+                
+                comment_list = self.get_list_of_comment(self.queryset)
 
             return HttpResponse(
-                    json.dumps(articles_list),
+                    json.dumps(comment_list),
                     status=status.HTTP_200_OK,
                 )
-        except Exception as e:
-            return Response(
-                f'this user has no articles => [ERR]: {e}',
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        
 
-    
+        except Exception as e:
+            return Response(json.dumps({
+                    "message": "No comments because Article with that slug does not exist," if "Articles matching query does not exist" in str(e) else str(e),
+                    # "message": str(e),
+                    "data": json.dumps(request.data)
+                }), status=status.HTTP_400_BAD_REQUEST)
+
+
+    @swagger_auto_schema(
+        request_body=CommentSerializer,
+        responses = {
+            '200' : 'HttpResponse status 201',
+            '400': 'comment has not been created',
+        },
+    )
+
+    def create(self, request, *args, **kwargs):
+        try:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        except Exception as e:
+            return Response(json.dumps({
+                    "message": str(e),
+                    "data": json.dumps(request.data)
+                }), status=status.HTTP_400_BAD_REQUEST)
+
+

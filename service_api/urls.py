@@ -68,11 +68,14 @@ urlpatterns = [
     
     # 
     path('articles/', ArticleViewSet.as_view({'get': 'list', 'post':'create'}), name="articles"), 
-    path('articles/<slug>', ArticleViewSet.as_view({'put': 'update'}), name='articles'),
+    path('articles/<slug>', ArticleViewSet.as_view({'put': 'update', 'delete':'delete'}), name='articles'),
     
-    # path('article/<user_id>', ArticleViewSet.as_view({'get': 'user_articles'}), name='user_articles'),
+    # path('articles/<user_id>', ArticleViewSet.as_view({'get': 'user_articles'}), name='articles'),
     
-    path('article/<user_id>', UserArticleViewSet.as_view({'get': 'list'}), name='user_articles'),
+    # 
+    path('comments/', CommentsViewSet.as_view({'get': 'list', 'post':'create'}), name="comments"), 
+    # path('comments/<article_slug>', CommentsViewSet.as_view({'get': 'list'}), name='comments'),
+    
     
 ]
 
