@@ -738,21 +738,14 @@ class CommentsViewSet(ModelViewSet):
                 print("\n")
                 
                 comments = Comments.objects.filter(article__slug=article_slug)
-
-                if comments:
-                    
-                    comment_list = self.get_list_of_category(comments)
-
-                    return HttpResponse(
-                        json.dumps(comment_list),
-                        status=status.HTTP_200_OK,
-                    )
-                                
-                else:
+                
+                if not comments:
                     return Response(json.dumps({
-                        "message": "Comments with that article slug do not exist",
+                        "message": "No Comments because Article with that slug do not exist",
                         "data": json.dumps(request.data)
                     }), status=status.HTTP_400_BAD_REQUEST)
+
+                comment_list = self.get_list_of_comment(comments)
             
             else:
                 
@@ -765,7 +758,8 @@ class CommentsViewSet(ModelViewSet):
 
         except Exception as e:
             return Response(json.dumps({
-                    "message": str(e),
+                    "message": "No comments because Article with that slug does not exist," if "Articles matching query does not exist" in str(e) else str(e),
+                    # "message": str(e),
                     "data": json.dumps(request.data)
                 }), status=status.HTTP_400_BAD_REQUEST)
 
