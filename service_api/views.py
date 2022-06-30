@@ -1184,8 +1184,8 @@ class DemandViewSet(ModelViewSet):
             raise ValidationError(f'[ERR]: Demands error ==> {e}')
 
         
-    demand_id = openapi.Parameter('demand_id', in_=openapi.IN_QUERY, description='Demand\'s id', type=openapi.TYPE_INTGER)
-        
+    demand_id = openapi.Parameter('demand_id', in_=openapi.IN_QUERY, description='Demand\'s id', type=openapi.TYPE_INTEGER)
+
 
     @swagger_auto_schema(
         manual_parameters=[demand_id])
