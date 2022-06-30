@@ -757,7 +757,8 @@ class CommentsViewSet(ModelViewSet):
             
             else:
                 
-                comment_list = self.get_list_of_comment(self.queryset)
+                # comment_list = self.get_list_of_comment(self.queryset)
+                comment_list = self.get_list_of_comment(Comments.objects.all().order_by('-created_at'))
 
             return HttpResponse(
                     json.dumps(comment_list),
