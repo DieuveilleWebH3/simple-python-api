@@ -498,10 +498,16 @@ class ArticleViewSet(ModelViewSet):
     def perform_create(self, serializer):
         serializer.save()
     
-    def get_list_of_articles(self, articles_objects):
+    def get_list_of_articles(self, request, articles_objects):
         articles_list = [] 
         
         try:
+
+            absurl = get_current_site(request).domain
+            
+            if "http://" not in absurl:
+                absurl = f"http://{absurl}"
+            
             for article in articles_objects:
                 
                 categories = []
@@ -517,7 +523,7 @@ class ArticleViewSet(ModelViewSet):
                     'title': article.title,
                     'slug': article.slug, 
                     "content": article.content,
-                    'photo': "" if not article.photo else article.photo.url,
+                    'photo': "" if not article.photo else f"{absurl}{article.photo.url}",
                     'read_by': article.read_by, 
                     'liked_by': article.liked_by,
                     'categories': categories,
