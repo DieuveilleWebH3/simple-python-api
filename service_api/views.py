@@ -1,4 +1,5 @@
 from ast import Delete
+from time import sleep
 from django.shortcuts import render, redirect, get_object_or_404, reverse
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponsePermanentRedirect
 # from django.contrib.auth.models import User
@@ -394,7 +395,16 @@ class CategoryViewSet(ModelViewSet):
                     )
             else:
                 
-                category_list = self.get_list_of_category(self.queryset)
+                print("\n")
+                print("*************************** Queryset issue ***********************")
+                print("\n")
+                print(self.get_queryset)
+                
+                sleep(9)
+                
+                # category_list = self.get_list_of_category(self.queryset)
+                category_list = self.get_list_of_category(self.get_queryset)
+                # category_list = self.get_get_list_of_category(self.queryset) # get_queryset
 
             return HttpResponse(
                     json.dumps(category_list),
