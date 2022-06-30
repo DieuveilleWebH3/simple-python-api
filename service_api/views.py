@@ -840,32 +840,36 @@ class CommentsViewSet(ModelViewSet):
         
 #         try:
 #             for group in groups_objects:
+                
+#                 articles = []
 
 #                 article_of_group = group.articles.all()
 
-#                 articles = [{'id':article.id, 'author': article.author.username, 'title':article.title, 'slug': article.slug} for article in article_of_group]
+#                 if article_of_group:
+#                     articles = [{'id':article.id, 'author': article.author.username, 'title':article.title, 'slug': article.slug} for article in article_of_group]
                 
-#                 one_article = {
+#                 one_group = {
 #                     'id': group.id,
 #                     'publisher': {'id':group.publisher.id, 'username':group.publisher.username, 'user_type': group.publisher.get_user_type_display() },
 #                     'title': group.title,
 #                     'slug': group.slug, 
-#                     'read_by': group.description, 
-#                     'photo': "" if not group.description else group.photo.url,
+#                     'description': group.description,
+#                     'articles': articles,
+#                     'photo': "" if not group.photo else group.photo.url,
 #                     'created_at': group.created_at.timestamp(),
 #                     'modified_at': group.modified_at.timestamp()
 #                 }
 
-#                 articles_list.append(one_article)
+#                 groups_list.append(one_group)
 
-#             return articles_list
+#             return groups_list
 #         except Exception as e:
-#             raise ValidationError(f'[ERR]: article error ==> {e}')
+#             raise ValidationError(f'[ERR]: Publish Group error ==> {e}')
 
         
-#     slug = openapi.Parameter('slug', in_=openapi.IN_QUERY, description='article\'s slug', type=openapi.TYPE_STRING)
+#     slug = openapi.Parameter('slug', in_=openapi.IN_QUERY, description='Publish Group\'s slug', type=openapi.TYPE_STRING)
     
-#     user_id = openapi.Parameter('user_id', in_=openapi.IN_QUERY, description='user\'s id', type=openapi.TYPE_INTEGER)
+#     user_id = openapi.Parameter('user_id', in_=openapi.IN_QUERY, description='Publisher\'s id', type=openapi.TYPE_INTEGER)
     
 
 #     @swagger_auto_schema(
@@ -875,40 +879,34 @@ class CommentsViewSet(ModelViewSet):
 #         slug = request.query_params.get('slug', None)
 #         user_id = request.query_params.get('user_id', None)
         
-#         articles_list = []
+#         groups_list = []
 
 #         try:
 #             if user_id:
                 
-#                 article = Articles.objects.filter(author__id=user_id)
+#                 group = PublishGroups.objects.filter(publisher__id=user_id)
 #                 # if article.exists():
-#                 if article:
+#                 if group:
                     
-#                     articles_list = self.get_list_of_articles(article)
+#                     groups_list = self.get_list_of_articles(group)
 
 #                     return HttpResponse(
-#                         json.dumps(articles_list),
+#                         json.dumps(groups_list),
 #                         status=status.HTTP_200_OK,
 #                     )
 
 #             elif slug:
                 
-#                 article = Articles.objects.filter(slug=slug)
+#                 group = PublishGroups.objects.filter(slug=slug)
 #                 # if article.exists():
-#                 if article:
+#                 if group:
                     
-#                     articles_list = self.get_list_of_articles(article)
-
-#                     return HttpResponse(
-#                         json.dumps(articles_list),
-#                         status=status.HTTP_200_OK,
-#                     )
+#                     groups_list = self.get_list_of_articles(group)
 #             else:
-#                 # articles_list = self.get_list_of_articles(self.queryset)
-#                 articles_list = self.get_list_of_articles(Articles.objects.all().order_by('-id'))
+#                 groups_list = self.get_list_of_groups(PublishGroups.objects.all().order_by('-id'))
 
 #             return HttpResponse(
-#                     json.dumps(articles_list),
+#                     json.dumps(groups_list),
 #                     status=status.HTTP_200_OK,
 #                 )
 #         except Exception as e:
