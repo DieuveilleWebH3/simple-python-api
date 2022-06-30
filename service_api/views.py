@@ -156,7 +156,7 @@ class LoginAPIView(generics.GenericAPIView):
                 response["user_type"] = user.get_user_type_display()
                 
                 if user.photo:
-                    photo = "http://127.0.0.1:8022"+user.photo.url
+                    photo = "http://178.33.234.128:8022"+user.photo.url
                     
                 response["photo"] = photo
 
@@ -518,7 +518,7 @@ class ArticleViewSet(ModelViewSet):
                     'title': article.title,
                     'slug': article.slug, 
                     "content": article.content,
-                    'photo': "" if not article.photo else "http://127.0.0.1:8022"+article.photo.url,
+                    'photo': "" if not article.photo else "http://178.33.234.128:8022"+article.photo.url,
                     'read_by': article.read_by, 
                     'liked_by': article.liked_by,
                     'categories': categories,
@@ -875,7 +875,7 @@ class PublishGroupsViewSet(ModelViewSet):
                     'slug': group.slug, 
                     'description': group.description,
                     'articles': articles,
-                    'photo': "" if not group.photo else "http://127.0.0.1:8022"+group.photo.url,
+                    'photo': "" if not group.photo else "http://178.33.234.128:8022"+group.photo.url,
                     'created_at': group.created_at.timestamp(),
                     'modified_at': group.modified_at.timestamp()
                 }
