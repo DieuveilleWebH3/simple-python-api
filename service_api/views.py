@@ -350,16 +350,12 @@ class CategoryViewSet(ModelViewSet):
                 article_of_category = Articles.objects.filter(category=category)
 
                 articles = [{'id':d.id, 'author': {'id':d.author.id, 'username':d.author.username, 'user_type': d.author.get_user_type_display()}, 'title':d.title, 'slug': d.slug, 'read_by': d.read_by, 'liked_by': d.liked_by} for d in article_of_category]
-                # articles = [{'id':d.id, 'author': model_to_dict(d.author), 'title':d.title, 'slug': d.slug, 'read_by': d.read_by, 'liked_by': d.liked_by} for d in article_of_category]
-                
-                # print("\n")
-                # print("*************************** Articles in Category ****************** ")
-                # print(articles)
                 
                 one_category = {
                     'id': category.id,
                     'title': category.title,
                     'slug': category.slug,
+                    'description': category.description,
                     'articles': articles,
                     'created_at': category.created_at.timestamp(),
                     'modified_at': category.modified_at.timestamp()

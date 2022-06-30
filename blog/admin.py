@@ -18,7 +18,7 @@ from .models import *
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("title",)} 
-    list_display = ['id','title','slug', "created_at", "modified_at"] 
+    list_display = ['id','title','slug', "description", "created_at", "modified_at"] 
     search_fields = ['title', 'id' ] 
     filter_fields = ['title', 'slug'] 
 
