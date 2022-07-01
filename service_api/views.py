@@ -712,9 +712,14 @@ class ArticleViewSet(ModelViewSet):
                         "message": "article has successfully been deleted",
                     }), status=status.HTTP_200_OK)
 
+                # return Response(json.dumps({
+                #     "message": "article belongs to a Published Group, you may not delete it",
+                # }), status=status.HTTP_401_UNAUTHORIZED)
+                
                 return Response(json.dumps({
+                    "error": "article belongs to a Published Group, you may not delete it",
                     "message": "article belongs to a Published Group, you may not delete it",
-                }), status=status.HTTP_401_UNAUTHORIZED)
+                }), status=status.HTTP_200_OK)
             
             else:
                 return Response(json.dumps({
