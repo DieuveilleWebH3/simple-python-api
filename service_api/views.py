@@ -1022,6 +1022,10 @@ class PublishGroupsViewSet(ModelViewSet):
             self.perform_create(serializer)
             # headers = self.get_success_headers(serializer.data)
             # return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+            
+            # group = PublishGroups.objects.get(slug=request.data['slug'])
+            # group.articles.add(*request.data['articles'])
+            # group.save()
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 

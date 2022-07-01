@@ -176,41 +176,17 @@ path('', include('dashboard.urls')),
 
 
 We add the static root, media root, template path in the settings.py and urls.py files. 
-Then, we create one and only one instance of the allow_registration models from the django admin panel or using our terminal 
 
 
-Cmd -> python ->  
 
-import os 
-
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mysite.settings")  
-
-from django.core.wsgi import get_wsgi_application 
-
-application = get_wsgi_application() 
-
-from account.models import *   
-
-allow = AllowRegistration(name='user_registration', status=True)   
-
-allow.save() 
-
-
-Basics functionalities have been implemented: Login, Logout, Register, Edit Profile, Change Password, Reset or Recover Password. 
-
-**Attention** the Registration view depends on the Admin, there is a functionality Allow_Registration which may (or may not) allow new users to register. 
-The Admin must login and choose if people can register or not to the website, it can be changed on the dashboard or on the Django admin panel and it is set to True by default, meaning users can register to the web application.  
+Basic functionalities have been implemented: Login, Register, Edit Profile, Change Password, Reset or Recover Password. 
+ 
 
 
 **In setting.py:** mysite/settings.py we add the following at the bottom of the page 
 
-LOGIN_REDIRECT_URL = 'dashboard' 
+LOGIN_REDIRECT_URL = 'index' 
 
-LOGIN_URL = 'login' 
-
-LOGOUT_URL = 'logout' 
-
-LOGOUT_REDIRECT_URL = 'login' 
 
 AUTHENTICATION_BACKENDS = [ 
 
@@ -227,22 +203,27 @@ And, so far, our project is up and running.
 
 ## 3.2 Using Account Module as Base ## 
 
-We clone the specific repository or download the compressed project; the project contains the Account module and the Dashboard module. 
-The project has been dockerized (the docker-compose.yml may be changed according to the need of the project you are building), so we start by building the environment by running docker-compose build then docker-compose up  
+We clone the specific repository or download the compressed project; the project contains the Account module, the Dashboard module, the Blog module and the APIs. 
+The project has been dockerized (the docker-compose.yml may be changed according to the need of the project you are building)
+
+So we start by building the environment by running 
+
+#### docker-compose build 
+
+then 
+
+#### docker-compose up  
 
 This should also run the migrations, we can now create a super user and take a look at the app.  
 
-By default, we have created 4 types of users: type1, type2, type3 and type4, the names can be changed in the models.py file (after every change, we must run the migrations, restarting docker works too).  
 
-The Dashboard app has only one view redirected after we have logged in.
 
-Basics functionalities have been implemented: Login, Logout, Register, Edit Profile, Change Password, Reset or Recover Password. 
+ 
+<br/>
 
-**Attention** the Registration view depends on the Admin, there is a functionality Allow_Registration which may (or may not) allow new users to register. 
-The Admin must login and choose if people can register or not to the website, it can be changed on the dashboard or on the Django admin panel and it is set to True by default, meaning users can register to the web application.  
+### The desired project can then be built around those modules and the different type of users can be given roles.
 
-The desired project can then be built around those modules and the different type of users can be given roles.
-
+<br/>
 
 
 ## 3.3 Email Server Configuration ## 
@@ -274,4 +255,6 @@ We can also test the functionality on our local server, by replacing (or comment
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' 
 
 This will show the email in our terminal.
+
+**It is recommended to use environment variables to keep all credentials, as it is defined in this project**
 

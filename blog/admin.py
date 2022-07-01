@@ -44,11 +44,11 @@ class CommentAdmin(admin.ModelAdmin):
 @admin.register(PublishGroups)
 class PublishGroupsAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("title",)} 
-    list_display = ['id','publisher','articles', 'title', 'slug', 'description', "created_at", "modified_at"] 
+    list_display = ['id','publisher','article', 'title', 'slug', 'description', "created_at", "modified_at"] 
     search_fields = ['title', 'description' ] 
     filter_fields = ['publisher']
     
-    def articles(self, obj): 
+    def article(self, obj): 
         return "\n \n".join([f'{t.title} , ' for t in obj.articles.all()]) 
 
 
