@@ -178,6 +178,22 @@ class DemandSerializer(serializers.ModelSerializer):
 
 
 
+""" 
+    class DemandsReviews(models.Model):
+        
+        publisher = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
+
+        demand = models.ForeignKey(Demands, blank=False, null=False, on_delete=models.CASCADE)
+
+        content = models.TextField(null=False, blank=False)
+        
+        status = models.BooleanField(default=False)
+
+        created_at = models.DateTimeField(auto_now_add=True)
+        modified_at = models.DateTimeField(auto_now=True)
+"""
+
+
 class UserSerializer(serializers.ModelSerializer):
     
     class Meta:
