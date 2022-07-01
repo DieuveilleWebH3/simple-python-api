@@ -1147,3 +1147,183 @@ class UserViewSet(ModelViewSet):
                 }), status=status.HTTP_400_BAD_REQUEST)
 
         
+
+# ********************************* DONE ************************************************
+class DemandViewSet(ModelViewSet):
+    serializer_class = DemandSerializer
+    queryset = Demands.objects.all().order_by('-id')
+
+    lookup_field = "id"
+
+    def get_serializer(self, data):
+        return self.serializer_class(data=data)
+    
+    def perform_create(self, serializer):
+        serializer.save()
+    
+    def get_list_of_demands(self, demands_objects):
+        demands_list = [] 
+        
+        try:
+            for demand in demands_objects:
+
+                one_demand = {
+                    'id': demand.id,
+                    'author': {'id':demand.author.id, 'username':demand.author.username, 'user_type':demand.author.get_user_type_display() },
+                    'publish_group': {'id':demand.publish_group.id, 'title':demand.publish_group.title, 'slug':demand.publish_group.slug, 'description':demand.publish_group.description},
+                    'article': {'id':demand.article.id, 'title':demand.article.title, 'slug':demand.article.slug}, 
+                    'content': demand.content,
+                    'created_at': demand.created_at.timestamp(),
+                    'modified_at': demand.modified_at.timestamp()
+                }
+
+                demands_list.append(one_demand)
+
+            return demands_list
+        except Exception as e:
+            raise ValidationError(f'[ERR]: Demands error ==> {e}')
+
+        
+    demand_id = openapi.Parameter('demand_id', in_=openapi.IN_QUERY, description='Demand\'s id', type=openapi.TYPE_INTEGER)
+
+
+    @swagger_auto_schema(
+        manual_parameters=[demand_id])
+
+    def list(self, request, *args, **kwargs):
+        demand_id = request.query_params.get('demand_id', None)
+        
+        demands_list = []
+
+        try:
+            if demand_id:
+                
+                demand = Demands.objects.filter(id=demand_id)
+
+                if demand:
+                    
+                    demands_list = self.get_list_of_demands(demand)
+
+            else:
+                demands_list = self.get_list_of_demands(Demands.objects.all().order_by('-id'))
+
+            return HttpResponse(
+                    json.dumps(demands_list),
+                    status=status.HTTP_200_OK,
+                )
+        except Exception as e:
+            return Response(
+                f'Demands not found => [ERR]: {e}',
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        
+
+    @swagger_auto_schema(
+        request_body=DemandSerializer,
+        responses = {
+            '200' : 'HttpResponse status 201',
+            '400': 'Demand has not been created',
+        },
+    )
+
+    def create(self, request, *args, **kwargs):
+        try:
+            serializer = self.get_serializer(data=request.data)
+            
+            if "article" not in request.data:
+                return Response(json.dumps({
+                    # "message": 'category with this title already exists.' if 'unique' in str(e) else str(e),
+                    "message": "You must provide at least an article id !",
+                    "data": json.dumps(request.data)
+                }), status=status.HTTP_400_BAD_REQUEST)
+                
+                
+            if "publish_group" not in request.data:
+                return Response(json.dumps({
+                    "message": "You must provide at least a group id !",
+                    "data": json.dumps(request.data)
+                }), status=status.HTTP_400_BAD_REQUEST)
+                
+                
+            if "author" not in request.data:
+                return Response(json.dumps({
+                    "message": "You must provide the author id !",
+                    "data": json.dumps(request.data)
+                }), status=status.HTTP_400_BAD_REQUEST)
+            
+            if not re.match(r'^([\s\d]+)$', str(request.data["author"]) ):
+                return Response(json.dumps({
+                    "message": "The author's id must be a digit !",
+                    "data": json.dumps(request.data)
+                }), status=status.HTTP_400_BAD_REQUEST)
+                
+            try:
+                the_author = User.objects.get(id=int(request.data["author"]))
+                
+                if not the_author:
+                    return Response(json.dumps({
+                        "message": "The author's id must be a digit !",
+                        "data": json.dumps(request.data)
+                    }), status=status.HTTP_400_BAD_REQUEST)
+                    
+            except Exception as e:
+                return Response(json.dumps({
+                        "message": str(e),
+                        "data": json.dumps(request.data)
+                    }), status=status.HTTP_400_BAD_REQUEST)
+                    
+            
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            # headers = self.get_success_headers(serializer.data)
+            # return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        except Exception as e:
+            return Response(json.dumps({
+                    # "message": 'category with this title already exists.' if 'unique' in str(e) else str(e),
+                    "message": str(e),
+                    "data": json.dumps(request.data)
+                }), status=status.HTTP_400_BAD_REQUEST)
+
+
+    @swagger_auto_schema(
+        request_body=DemandSerializer,
+        responses = {
+            '200' : 'HttpResponse status 200',
+            '400': 'Demand group has not been updated',
+        },
+    )
+
+    def update(self, request, demand_id, *args, **kwargs):
+
+        try:
+            
+            demand = Demands.objects.get(id=demand_id)
+
+            if demand:
+                
+                serializer = DemandSerializer(demand, data=request.data)
+                # serializer = self.get_serializer(data=request.data)
+                serializer.is_valid(raise_exception=True)
+
+                serializer.save()
+
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            
+            else:
+                return Response(json.dumps({
+                    "message": "Demand with that id does not exist",
+                    "data": json.dumps(request.data)
+                }), status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            return Response(json.dumps({
+                    # "message": 'category with this title already exists.' if 'unique' in str(e) else str(e),
+                    "message": str(e),
+                    "data": json.dumps(request.data)
+                }), status=status.HTTP_400_BAD_REQUEST)
+        
+        
+        

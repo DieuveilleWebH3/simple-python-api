@@ -171,11 +171,27 @@ class PublishGroupsSerializer(serializers.ModelSerializer):
         fields = ["id", "publisher", "title", "slug", "description", "articles", "description", "photo", "created_at", "modified_at"]
 
 
-class DemandsSerializer(serializers.ModelSerializer):
+class DemandSerializer(serializers.ModelSerializer):
     class Meta:
         model = Demands
         fields = ["id", "author", "publish_group", "article", "content", "created_at", "modified_at"]
 
+
+
+""" 
+    class DemandsReviews(models.Model):
+        
+        publisher = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
+
+        demand = models.ForeignKey(Demands, blank=False, null=False, on_delete=models.CASCADE)
+
+        content = models.TextField(null=False, blank=False)
+        
+        status = models.BooleanField(default=False)
+
+        created_at = models.DateTimeField(auto_now_add=True)
+        modified_at = models.DateTimeField(auto_now=True)
+"""
 
 
 class UserSerializer(serializers.ModelSerializer):

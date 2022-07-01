@@ -57,9 +57,9 @@ urlpatterns = [
     path('register/', RegisterView.as_view(), name="api_register"),
 
 
-    # path('request-reset-email/', RequestPasswordResetEmail.as_view(), name="request-reset-email"),
-    # path('password-reset/<uidb64>/<token>/', PasswordTokenCheckAPI.as_view(), name='password-reset-confirm'),
-    # path('password-reset-complete', SetNewPasswordAPIView.as_view(), name='password-reset-complete'),
+    path('request-reset-email/', RequestPasswordResetEmail.as_view(), name="request-reset-email"),
+    path('password-reset/<uidb64>/<token>/', PasswordTokenCheckAPI.as_view(), name='password-reset-confirm'),
+    path('password-reset-complete', SetNewPasswordAPIView.as_view(), name='password-reset-complete'),
     
     
     # 
@@ -81,6 +81,11 @@ urlpatterns = [
     # 
     path('groups/', PublishGroupsViewSet.as_view({'get': 'list', 'post':'create'}), name="groups"), 
     path('groups/<slug>', PublishGroupsViewSet.as_view({'put': 'update', 'delete':'delete'}), name='groups'),
+    
+    
+    # 
+    path('demands/', DemandViewSet.as_view({'get': 'list', 'post':'create'}), name="demands"), 
+    path('demands/<demand_id>', DemandViewSet.as_view({'put': 'update'}), name='demands'),
     
     
     #

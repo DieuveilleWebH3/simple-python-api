@@ -51,3 +51,12 @@ class PublishGroupsAdmin(admin.ModelAdmin):
     def articles(self, obj): 
         return "\n \n".join([f'{t.title} , ' for t in obj.articles.all()]) 
 
+
+@admin.register(Demands)
+class DemandsAdmin(admin.ModelAdmin): 
+    list_display = ['id','author','article', 'publish_group', 'content', "created_at", "modified_at"] 
+    search_fields = ['article__title', 'publish_group__title' ] 
+    filter_fields = ['publish_group', 'article', 'author']
+    
+    
+
