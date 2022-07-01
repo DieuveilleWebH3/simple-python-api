@@ -80,11 +80,18 @@ The API Module is based on the CRUD user interface convention.
 ![API DataBase ER Diagram ](/resources/simple_python_api_erd.png)    
 
 >> ER Diagram PostgreSQL  
-  
+
 
 <br />
 
 ### The main models (tables) are **Category**, **Articles**, **Users**, **Comments**, **PublishGroups**, **Demands** and **DemandsReviews**   
+
+
+<br />
+
+![API DataBase ER Diagram ](/resources/simple_python_api_class_diagram.png)    
+
+>> Class Diagram  
 
 
 <br />  
