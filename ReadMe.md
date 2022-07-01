@@ -126,10 +126,6 @@ The API Module is based on the CRUD user interface convention.
         Which are saved, then analyzed and categorized through an api 
         
 
-        views.py - line 2397  def portail_declaratif(request):
-
-    ![Functions for Complaint Module](/resources/views_portail_declaratif.png) 
-
 
 
 There are two ways to use the Account Module:  
@@ -140,7 +136,7 @@ Using the module’s project as base and add other modules in it
 
 ## 3.1 Starting New Project ##   
 
-As a complementary module, the Account Module must be integrated in another project / website. 
+As a complementary module, the Account Module must be integrated in another project. 
 
 **Attention** it is advised that this module be integrated before creating a user for your project, else, you will encounter a database migration issue (which you can still solve, but it is untoward)  
 
@@ -155,7 +151,7 @@ We then open our IDE / text editor to edit the files.
 
 In INSTALLED_APPS (~line 33) we comment the ‘django.contrib.admin’ line and we add two lines ‘account’, and ‘dashboard’, to register the two new apps to the project 
 
-  And we add AUTH_USER_MODEL = "account.User" after ALLOWED_HOSTS
+And we add AUTH_USER_MODEL = "account.User" after ALLOWED_HOSTS
 
 
 **In urls.py:**  mysite/urls.py 
